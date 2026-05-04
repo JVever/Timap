@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>LightCraft · Cross-Timezone Tool</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    background: linear-gradient(160deg, #1a2c44 0%, #0d141f 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro", system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Fake macOS menu bar at top of window */
+  .menubar {
+    height: 24px;
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border-bottom: 0.5px solid rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(0,0,0,0.85);
+    flex-shrink: 0;
+  }
+  .menubar .app-name { font-weight: 600; }
+  .menubar .menu-item { color: rgba(0,0,0,0.6); }
+  .menubar .spacer { flex: 1; }
+  .menubar .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background: rgba(0,0,0,0.9);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .menubar .clock { font-variant-numeric: tabular-nums; }
+
+  /* Anchor for the popover (mimics menu-bar tray icon location) */
+  .tray-anchor {
+    position: absolute;
+    top: 2px;
+    right: 50px;
+    width: 22px;
+    height: 20px;
+    border-radius: 5px;
+    background: rgba(0,0,0,0.08);
+  }
+
+  /* Subtle radial sheen on the desktop */
+  .desktop {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+  }
+  .desktop::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 70% 80%, rgba(255,255,255,0.05), transparent 60%);
+    pointer-events: none;
+  }
+
+  /* The popover itself: anchored under the menu-bar tray */
+  .popover-wrap {
+    position: absolute;
+    top: 36px;
+    right: 24px;
+    z-index: 5;
+  }
+
+  @media (max-width: 720px) {
+    .popover-wrap {
+      position: relative;
+      top: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding: 24px 12px;
+    }
+    .popover-wrap > div { transform: scale(0.92); transform-origin: top center; }
+  }
+</style>
+</head>
+<body>
+
+<header class="menubar">
+  <span class="app-name">LightCraft</span>
+  <span class="menu-item">File</span>
+  <span class="menu-item">Edit</span>
+  <span class="menu-item">View</span>
+  <span class="spacer"></span>
+  <span class="icon">◴</span>
+  <span class="clock" id="clock">10:00 AM</span>
+</header>
+
+<main class="desktop">
+  <div class="tray-anchor"></div>
+  <div class="popover-wrap">
+    <div id="root"></div>
+  </div>
+</main>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="shared.jsx"></script>
+<script type="text/babel" src="bd-map-styles.jsx"></script>
+<script type="text/babel" src="direction-bd.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+  const { DirBD } = window;
+
+  // Live wall clock for the menu bar
+  function tickClock() {
+    const now = new Date();
+    let h = now.getHours();
+    const m = now.getMinutes();
+    const period = h < 12 ? 'AM' : 'PM';
+    h = h % 12; if (h === 0) h = 12;
+    const el = document.getElementById('clock');
+    if (el) el.textContent = `${h}:${String(m).padStart(2, '0')} ${period}`;
+  }
+  tickClock();
+  setInterval(tickClock, 30 * 1000);
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<DirBD mapStyle="dotGrid" />);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# Swift Package Manager / build artifacts
+Timap/.build/
+Timap/dist/
+.swiftpm/
+*.xcuserstate
+xcuserdata/
+
+# Editor / IDE
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Node (if any tooling lands here)
+node_modules/
