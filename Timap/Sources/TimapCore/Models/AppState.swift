@@ -66,16 +66,26 @@ public struct CityGroup: Identifiable {
         self.isHidden = isHidden
     }
 
+    /// How to order the resulting list. `.byOffset` is the default for the
+    /// home view (home first → visible by descending UTC offset → hidden
+    /// last). `.insertion` keeps the order cities were added — used by the
+    /// settings list so the most recently added city sits next to the "+"
+    /// button instead of jumping to wherever its UTC offset lands.
+    public enum SortMode {
+        case byOffset
+        case insertion
+    }
+
     /// Group teammates + home + extra cities into card data. The home city
     /// is always included (provided `home` is non-nil), and home's geo /
     /// work-hours always come from the home record — not from any teammate
-    /// who happens to share that city. Sort: home first; then visible by
-    /// descending UTC offset; hidden last.
+    /// who happens to share that city.
     public static func group(
         team: [Teammate],
         home: EmptyCityRecord? = nil,
         extraCities: [EmptyCityRecord] = [],
-        hiddenCities: Set<String> = []
+        hiddenCities: Set<String> = [],
+        sort: SortMode = .byOffset
     ) -> [CityGroup] {
         var memberBuckets: [String: [Teammate]] = [:]
         var insertionOrder: [String] = []
@@ -140,10 +150,25 @@ public struct CityGroup: Identifiable {
             ))
         }
 
-        return result.sorted { a, b in
-            if a.isHome != b.isHome { return a.isHome && !b.isHome }
-            if a.isHidden != b.isHidden { return !a.isHidden && b.isHidden }
-            return a.offsetHours > b.offsetHours
+        switch sort {
+        case .byOffset:
+            return result.sorted { a, b in
+                if a.isHome != b.isHome { return a.isHome && !b.isHome }
+                if a.isHidden != b.isHidden { return !a.isHidden && b.isHidden }
+                return a.offsetHours > b.offsetHours
+            }
+        case .insertion:
+            // `result` is built in insertion order (home → team-insertion
+            // → extraCities). Partition into 3 buckets and concatenate so
+            // relative order is preserved — `Array.sorted` isn't stable in
+            // Swift's stdlib, so a comparator that returns false for
+            // equal-rank pairs still permits reordering. Newly-added cities
+            // sit at the end of `extraCities` and therefore at the end of
+            // the visible-non-home bucket, right above the "+" button.
+            let homeBucket  = result.filter { $0.isHome }
+            let visBucket   = result.filter { !$0.isHome && !$0.isHidden }
+            let hidBucket   = result.filter { !$0.isHome && $0.isHidden }
+            return homeBucket + visBucket + hidBucket
         }
     }
 }
@@ -296,11 +321,30 @@ public final class AppState: ObservableObject {
         )
     }
 
+    /// Grouped cities sorted for the home view: home first, then by UTC
+    /// offset descending, hidden last. This matches the way users expect
+    /// to read the timezone strip on the main panel.
     public var citiesGrouped: [CityGroup] {
         CityGroup.group(
             team: team, home: home,
             extraCities: extraCities,
-            hiddenCities: hiddenCities
+            hiddenCities: hiddenCities,
+            sort: .byOffset
+        )
+    }
+
+    /// Grouped cities sorted for the settings list: home first, then
+    /// teammate-populated cities in the order they were added, then empty
+    /// cities (extraCities) in the order they were added. Newly-added
+    /// cities therefore land at the bottom of the list, right above the
+    /// "+" button — the regression-prone case the user keeps hitting when
+    /// the home sort leaks into settings.
+    public var citiesGroupedForSettings: [CityGroup] {
+        CityGroup.group(
+            team: team, home: home,
+            extraCities: extraCities,
+            hiddenCities: hiddenCities,
+            sort: .insertion
         )
     }
 

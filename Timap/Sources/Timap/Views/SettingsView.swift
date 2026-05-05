@@ -25,7 +25,7 @@ struct SettingsView: View {
             header
             ScrollView {
                 VStack(alignment: .leading, spacing: 14) {
-                    ForEach(state.citiesGrouped) { group in
+                    ForEach(state.citiesGroupedForSettings) { group in
                         CityCardSettingsView(
                             group: group,
                             justPromoted: justPromoted == group.city,
@@ -35,7 +35,7 @@ struct SettingsView: View {
                     }
                     if addingCity {
                         CityAddForm(
-                            existing: Set(state.citiesGrouped.map(\.city)),
+                            existing: Set(state.citiesGroupedForSettings.map(\.city)),
                             onSave: { c in
                                 state.addEmptyCity(c)
                                 addingCity = false
@@ -72,6 +72,10 @@ struct SettingsView: View {
     // MARK: - Header
 
     private var header: some View {
+        // Padding/heights mirror HeaderView so the Done button on this page
+        // sits at the exact same y as the gear icon on the main page —
+        // opening / closing settings doesn't make the user's mouse target
+        // jump.
         HStack(spacing: 10) {
             Text(state.tr(.settings))
                 .font(.system(size: 15, weight: .semibold))
@@ -79,23 +83,10 @@ struct SettingsView: View {
                 .tracking(-0.2)
             Spacer()
             LanguageSegmented(value: $state.language)
-            Button(state.tr(.done), action: onClose)
-                .buttonStyle(.plain)
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 12).padding(.vertical, 4)
-                .background(
-                    RoundedRectangle(cornerRadius: 5)
-                        .fill(Color.white.opacity(0.10))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 5)
-                                .stroke(Color.white.opacity(0.14), lineWidth: 0.5)
-                        )
-                )
-                .keyboardShortcut(.cancelAction)
+            doneButton
         }
         .padding(.horizontal, 18)
-        .padding(.top, 14)
+        .padding(.top, 16)
         .padding(.bottom, 12)
         .background(
             LinearGradient(
@@ -109,6 +100,29 @@ struct SettingsView: View {
                 .frame(height: 0.5),
             alignment: .bottom
         )
+    }
+
+    /// Visually matches the home page's segmented Now+gear capsule: 28pt
+    /// tall, 8pt corner radius, the same subtle white-on-dark surface.
+    /// Result: the right-edge button lives in the same pixel slot whether
+    /// the user is on home or in settings.
+    private var doneButton: some View {
+        Button(action: onClose) {
+            Text(state.tr(.done))
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.white)
+                .padding(.horizontal, 14)
+                .frame(height: 28)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .background(Color.white.opacity(0.06))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .keyboardShortcut(.cancelAction)
     }
 
     // MARK: - Footer

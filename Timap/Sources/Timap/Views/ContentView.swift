@@ -15,11 +15,29 @@ struct ContentView: View {
     @EnvironmentObject var state: AppState
     @State private var route: Route = .main
 
+    /// Header(60) + slider(50) + map+padding(218) + footer/spacing(20) ≈ 348.
+    /// Each city card with chips runs ~88pt and the gap between cards is 8.
+    /// We size for the visible city count, capped at 5 — past that the
+    /// TeamRowsView's internal ScrollView absorbs the rest. The popover
+    /// height is shared between main and settings so swapping routes
+    /// doesn't bounce the menu-bar window.
+    private static let baseHeight: CGFloat = 348
+    private static let cardHeight: CGFloat = 88
+    private static let cardGap: CGFloat = 8
+    private static let rowsPadding: CGFloat = 22
+    private static let maxCardsVisible = 5
+
+    private var dynamicHeight: CGFloat {
+        guard state.hasOnboarded else { return 640 }
+        let count = state.citiesGrouped.count
+        let n = max(1, min(Self.maxCardsVisible, count))
+        return Self.baseHeight
+            + CGFloat(n) * Self.cardHeight
+            + CGFloat(max(0, n - 1)) * Self.cardGap
+            + Self.rowsPadding
+    }
+
     var body: some View {
-        // Width is fixed; height is intrinsic so NSHostingController can
-        // report the correct preferredContentSize to NSPopover. ZStack is
-        // top-aligned so any unexpected overflow clips at the bottom only,
-        // never chopping the header.
         ZStack(alignment: .top) {
             Color(hex: "#0d1420").ignoresSafeArea()
 
@@ -34,12 +52,11 @@ struct ContentView: View {
                 }
             }
         }
-        // Fixed popover size. Locking both width AND height here means the
-        // NSPopover's preferredContentSize never changes when the route
-        // swaps (main ↔ settings ↔ onboarding), so the popover doesn't
-        // jump around or reposition relative to the menu-bar icon. Each
-        // route fills/scrolls inside this fixed container.
-        .frame(width: 580, height: 640)
+        // Width fixed, height adapts to the visible city count (capped
+        // at 5 cards). Both routes use the same height so the popover
+        // doesn't jump when swapping main ↔ settings.
+        .frame(width: 580, height: dynamicHeight)
+        .animation(.easeInOut(duration: 0.18), value: dynamicHeight)
         .preferredColorScheme(.dark)
     }
 }

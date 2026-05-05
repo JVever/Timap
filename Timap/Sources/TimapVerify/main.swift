@@ -534,6 +534,65 @@ do {
     check(starts.first == 7.0, "Sync used Mira's 7 (alphabetical anchor) for Seattle")
 }
 
+// CityGroup.group sort modes — settings list keeps insertion order so a
+// newly-added city always sits at the bottom near the "+" button, even
+// when its UTC offset would place it elsewhere. Regression-prone: every
+// time the home and settings views share the same `citiesGrouped` API,
+// this guarantee evaporates.
+do {
+    let beijing = City(name: "Beijing", nameZh: "北京",
+                       country: "CN", flag: "🇨🇳",
+                       lat: 39.9, lng: 116.4, tz: "Asia/Shanghai")
+    let tokyo = City(name: "Tokyo", nameZh: "东京",
+                     country: "JP", flag: "🇯🇵",
+                     lat: 35.7, lng: 139.7, tz: "Asia/Tokyo")
+    let london = City(name: "London", nameZh: "伦敦",
+                      country: "GB", flag: "🇬🇧",
+                      lat: 51.5, lng: -0.1, tz: "Europe/London")
+    let home = EmptyCityRecord(city: beijing, workStart: 9, workEnd: 23)
+    let extras = [
+        EmptyCityRecord(city: tokyo,  workStart: 9, workEnd: 23),
+        EmptyCityRecord(city: london, workStart: 9, workEnd: 23),
+    ]
+
+    // Default `.byOffset` ordering — Tokyo (+9) > Beijing (+8) > London (~0)
+    // → home first, then by offset desc → Beijing, Tokyo, London.
+    let byOffset = CityGroup.group(team: [], home: home, extraCities: extras)
+    check(byOffset.map(\.city) == ["Beijing", "Tokyo", "London"],
+          "byOffset: home first, then by UTC offset descending",
+          "got \(byOffset.map(\.city))")
+
+    // `.insertion` ordering — home first, then extraCities in the order
+    // they were added (Tokyo before London). The settings list MUST use
+    // this so newly-added cities don't jump to the middle by offset.
+    let byInsertion = CityGroup.group(
+        team: [], home: home, extraCities: extras, sort: .insertion
+    )
+    check(byInsertion.map(\.city) == ["Beijing", "Tokyo", "London"],
+          ".insertion: home first, then extraCities in add order",
+          "got \(byInsertion.map(\.city))")
+
+    // The actual regression scenario: add London FIRST (low offset), then
+    // Tokyo (high offset). `byOffset` would surface Tokyo above London;
+    // `.insertion` must keep London before Tokyo.
+    let extrasReversed = [
+        EmptyCityRecord(city: london, workStart: 9, workEnd: 23),
+        EmptyCityRecord(city: tokyo,  workStart: 9, workEnd: 23),
+    ]
+    let regression = CityGroup.group(
+        team: [], home: home, extraCities: extrasReversed, sort: .insertion
+    )
+    check(regression.map(\.city) == ["Beijing", "London", "Tokyo"],
+          ".insertion: a low-offset city added first stays above a high-offset city added later",
+          "got \(regression.map(\.city))")
+    let regressionByOffset = CityGroup.group(
+        team: [], home: home, extraCities: extrasReversed
+    )
+    check(regressionByOffset.map(\.city) == ["Beijing", "Tokyo", "London"],
+          "byOffset reorders the same input by UTC — these two modes MUST stay distinct",
+          "got \(regressionByOffset.map(\.city))")
+}
+
 // CityGroup.group with home record
 do {
     let beijing = City(name: "Beijing", nameZh: "北京",
