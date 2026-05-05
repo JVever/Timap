@@ -50,12 +50,9 @@ struct SettingsView: View {
                 .padding(.top, 14)
                 .padding(.bottom, 16)
             }
-            // ScrollView fills the available vertical space inside the
-            // popover. ContentView's outer .frame(height: 640) keeps the
-            // popover the same size whether we're showing main, settings,
-            // or onboarding — so opening settings doesn't shift the
-            // popover's anchor position.
-            .frame(maxHeight: .infinity)
+            // Cap the scroll area; below the cap the ScrollView is
+            // intrinsic-height so the page sizes to its content.
+            .frame(maxHeight: 600)
             footer
         }
         .background(Color(hex: "#0d1420"))
