@@ -696,6 +696,44 @@ do {
     check(dys.contains { $0 != 0 }, "Co-located labels get separated")
 }
 
+// LabelPlacer regression: a city on one side of the world must not push
+// labels on the opposite side off the map. Bug report: hiding Boston
+// "fixes" Nanjing's label, even though they're on opposite continents.
+do {
+    let seattle = Teammate(name: "S", role: "", city: "Seattle", country: "US", flag: "",
+                           tzIdentifier: "America/Los_Angeles", lat: 47.6, lng: -122.3, colorHex: "#fff")
+    let chicago = Teammate(name: "C", role: "", city: "Chicago", country: "US", flag: "",
+                           tzIdentifier: "America/Chicago", lat: 41.9, lng: -87.6, colorHex: "#fff")
+    let boston  = Teammate(name: "B", role: "", city: "Boston",  country: "US", flag: "",
+                           tzIdentifier: "America/New_York", lat: 42.4, lng: -71.1, colorHex: "#fff")
+    let beijing = Teammate(name: "BJ", role: "", city: "Beijing", country: "CN", flag: "",
+                           tzIdentifier: "Asia/Shanghai", lat: 39.9, lng: 116.4, colorHex: "#fff")
+    let nanjing = Teammate(name: "NJ", role: "", city: "Nanjing", country: "CN", flag: "",
+                           tzIdentifier: "Asia/Shanghai", lat: 32.0, lng: 118.8, colorHex: "#fff")
+
+    let withBoston = LabelPlacer.placeCities(
+        CityGroup.group(team: [seattle, chicago, boston, beijing, nanjing])
+    )
+    let withoutBoston = LabelPlacer.placeCities(
+        CityGroup.group(team: [seattle, chicago, beijing, nanjing])
+    )
+
+    func y(_ ps: [LabelPlacer.PlacedCity], _ id: String) -> Double {
+        ps.first { $0.cityID == id }?.labelYPct ?? -1
+    }
+    let nWith = y(withBoston, "Nanjing")
+    let nWithout = y(withoutBoston, "Nanjing")
+    check(approx(nWith, nWithout, 0.01),
+          "Boston visibility does not affect Nanjing's label position",
+          "with=\(nWith) without=\(nWithout)")
+    // And every label stays within the map viewport.
+    for p in withBoston {
+        check(p.labelYPct >= 0 && p.labelYPct <= 100,
+              "Label \(p.cityID) y stays in [0,100]",
+              "got \(p.labelYPct)")
+    }
+}
+
 // Initials helper (from JSX d_initialsOf)
 do {
     check(Initials.of("王芳") == "王芳", "Initials: 2-char CJK keeps both")

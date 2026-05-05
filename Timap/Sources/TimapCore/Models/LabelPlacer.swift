@@ -27,57 +27,79 @@ public enum LabelPlacer {
     }
 
     public static func placeCities(_ cities: [CityGroup], minGap: Double = 20) -> [PlacedCity] {
-        var items: [(c: CityGroup, xPct: Double, yPct: Double)] = cities.map {
+        let labelHalfH: Double = 6
+        let labelW: Double = 16
+        let pinR: Double = 3.5
+
+        struct Item {
+            let c: CityGroup
+            let xPct: Double
+            let yPct: Double
+            let onRight: Bool
+            let labelLeft: Double
+            let labelRight: Double
+        }
+
+        var items: [Item] = cities.map {
             let p = Projection.project(lng: $0.lng, lat: $0.lat)
-            return (
-                c: $0,
-                xPct: (p.x / Projection.viewWidth) * 100,
-                yPct: (p.y / Projection.viewHeight) * 100
+            let xPct = (p.x / Projection.viewWidth) * 100
+            let yPct = (p.y / Projection.viewHeight) * 100
+            let onRight = xPct < 55
+            let labelLeft = onRight ? xPct + 4 : xPct - 4 - labelW
+            return Item(
+                c: $0, xPct: xPct, yPct: yPct, onRight: onRight,
+                labelLeft: labelLeft, labelRight: labelLeft + labelW
             )
         }
         items.sort { $0.yPct < $1.yPct }
 
         var dy: [String: Double] = [:]
 
-        // Pass 1: prevent labels from stacking on top of each other when
-        // their cities sit at similar latitudes.
+        // Pass 1: prevent labels from stacking when their cities sit at
+        // similar latitudes — but only push the current label down behind a
+        // previous one whose label box horizontally overlaps it. Without
+        // this guard, a city in the Americas (e.g. Boston) cascaded through
+        // and shoved labels in Asia (e.g. Nanjing) off the bottom of the map,
+        // even though their labels are on opposite sides of the world and
+        // never visually conflict.
         for i in 1..<items.count {
-            let prev = items[i - 1]
             let cur = items[i]
-            let prevTop = prev.yPct + (dy[prev.c.id] ?? 0)
-            let curTop = cur.yPct + (dy[cur.c.id] ?? 0)
-            if curTop - prevTop < minGap {
+            var bestPrevTop: Double? = nil
+            for j in 0..<i {
+                let other = items[j]
+                let horizontallyOverlaps =
+                    cur.labelLeft < other.labelRight && cur.labelRight > other.labelLeft
+                guard horizontallyOverlaps else { continue }
+                let otherTop = other.yPct + (dy[other.c.id] ?? 0)
+                if bestPrevTop == nil || otherTop > bestPrevTop! {
+                    bestPrevTop = otherTop
+                }
+            }
+            if let prevTop = bestPrevTop, cur.yPct - prevTop < minGap {
                 dy[cur.c.id] = prevTop + minGap - cur.yPct
             }
         }
 
         // Pass 2: prevent a label from crossing OVER another city's pin.
-        // Approximations (the percentages are wrt the map's bounding box):
+        // Approximations (percentages are wrt the map's bounding box):
         //   • label is ~16% wide, ~12% tall (city + time + 7pt padding)
         //   • pin's outer halo is ~3.5% wide on a typical popover map
         // For each label whose box intersects another city's pin box, push
-        // it further down (in 4% increments) up to a few attempts.
-        let labelHalfH: Double = 6
-        let labelW: Double = 16
-        let pinR: Double = 3.5
+        // it further down up to a few attempts.
         for i in 0..<items.count {
             let cur = items[i]
-            let onRight = cur.xPct < 55
             var labelDy = dy[cur.c.id] ?? 0
             for _ in 0..<6 {
                 let labelTop = cur.yPct + labelDy - labelHalfH
                 let labelBot = cur.yPct + labelDy + labelHalfH
-                let labelLeft = onRight ? cur.xPct + 4 : cur.xPct - 4 - labelW
-                let labelRight = labelLeft + labelW
                 var collided = false
                 for (j, other) in items.enumerated() where j != i {
                     let pinL = other.xPct - pinR
                     let pinR2 = other.xPct + pinR
                     let pinT = other.yPct - pinR
                     let pinB = other.yPct + pinR
-                    if labelLeft < pinR2 && labelRight > pinL
+                    if cur.labelLeft < pinR2 && cur.labelRight > pinL
                         && labelTop < pinB && labelBot > pinT {
-                        // Land label entirely below this pin's halo.
                         labelDy = max(labelDy, pinB + labelHalfH + 2 - cur.yPct)
                         collided = true
                         break
@@ -88,13 +110,28 @@ public enum LabelPlacer {
             dy[cur.c.id] = labelDy
         }
 
+        // Pass 3: clamp every label's center y so it stays within the map
+        // viewport. This is a safety net — if pass 1+2 still push a label off
+        // the bottom (e.g. a city near the equator behind a chain of others),
+        // we'd rather have it slightly overlap a neighbor than disappear.
+        let minY = labelHalfH
+        let maxY = 100 - labelHalfH
+        for item in items {
+            let labelY = item.yPct + (dy[item.c.id] ?? 0)
+            if labelY < minY {
+                dy[item.c.id] = minY - item.yPct
+            } else if labelY > maxY {
+                dy[item.c.id] = maxY - item.yPct
+            }
+        }
+
         return items.map { item in
             PlacedCity(
                 cityID: item.c.id,
                 xPct: item.xPct,
                 yPct: item.yPct,
                 dy: dy[item.c.id] ?? 0,
-                onRight: item.xPct < 55
+                onRight: item.onRight
             )
         }
     }
