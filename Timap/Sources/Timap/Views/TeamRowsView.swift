@@ -29,12 +29,10 @@ struct TeamRowsView: View {
                     CityCardView(group: g)
                 }
             }
-            .padding(.top, 10)
+            .padding(.top, 4)
             .padding(.bottom, 12)
             .padding(.horizontal, 18)
         }
         .frame(maxHeight: Self.maxRowsHeight)
-        .background(Color.black.opacity(0.18))
-        .overlay(Divider(), alignment: .top)
     }
 }

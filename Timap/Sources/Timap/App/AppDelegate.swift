@@ -18,6 +18,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let state = AppState.load()
     private var screenshotObserver: Any?
     private var tickTimer: Timer?
+    /// Global mouse-down monitor: closes the popover when the user clicks
+    /// anywhere outside this app. `.transient` behavior alone is unreliable
+    /// in `.accessory` (LSUIElement) apps because the popover never becomes
+    /// the key window, so the system never detects "focus lost".
+    private var outsideClickMonitor: Any?
 
     nonisolated func applicationDidFinishLaunching(_ notification: Notification) {
         Task { @MainActor in self.setUp() }
@@ -63,9 +68,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func togglePopover(_ sender: Any?) {
         if popover.isShown {
-            popover.performClose(sender)
+            closePopover()
         } else if let button = statusItem.button {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            startOutsideClickMonitor()
+        }
+    }
+
+    private func closePopover() {
+        stopOutsideClickMonitor()
+        popover.performClose(nil)
+    }
+
+    private func startOutsideClickMonitor() {
+        guard outsideClickMonitor == nil else { return }
+        outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(
+            matching: [.leftMouseDown, .rightMouseDown]
+        ) { [weak self] _ in
+            Task { @MainActor in self?.closePopover() }
+        }
+    }
+
+    private func stopOutsideClickMonitor() {
+        if let monitor = outsideClickMonitor {
+            NSEvent.removeMonitor(monitor)
+            outsideClickMonitor = nil
         }
     }
 
@@ -92,7 +119,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             guard let self else { return }
             let success = self.capture(to: path)
             if !wasShown {
-                self.popover.performClose(nil)
+                self.closePopover()
             }
             if success {
                 self.postDone(path: path)
