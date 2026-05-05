@@ -179,20 +179,20 @@ struct CityCardView: View {
         GeometryReader { geo in
             let w = geo.size.width
             ZStack(alignment: .leading) {
+                // 24 hourly cells matching the settings-page strip. Each
+                // cell is split internally into two 30-min halves: a city
+                // whose work starts at 9:30 fills the right half of the
+                // 9-10 cell and the full 10-11 cell. Visual density stays
+                // the same as the rest of the app, but the half-hour snap
+                // is honored.
                 HStack(spacing: 1.5) {
                     ForEach(0..<24, id: \.self) { i in
-                        let lh = TimeMath.hourInTz(
-                            hostHour: Double(i),
-                            hostOffset: state.hostOffsetHours,
-                            targetOffset: group.offsetHours(at: state.hostInstant)
+                        let firstHalf = isWorkAt(hostHour: Double(i))
+                        let secondHalf = isWorkAt(hostHour: Double(i) + 0.5)
+                        HalfHourCell(
+                            firstHalf: firstHalf && !hidden,
+                            secondHalf: secondHalf && !hidden
                         )
-                        let isWork = TimeMath.isInWorkHours(
-                            localHour: lh,
-                            workStart: group.workStart,
-                            workEnd: group.workEnd
-                        )
-                        RoundedRectangle(cornerRadius: 1)
-                            .fill(cellColor(isWork: isWork && !hidden))
                     }
                 }
                 .frame(height: 5)
@@ -211,7 +211,7 @@ struct CityCardView: View {
                 DragGesture(minimumDistance: 0)
                     .onChanged { g in
                         let frac = max(0, min(1, g.location.x / w))
-                        let snapped = (frac * 96).rounded() / 4
+                        let snapped = (frac * 48).rounded() / 2
                         state.setHostHour(min(24, snapped))
                     }
             )
@@ -219,9 +219,15 @@ struct CityCardView: View {
         .frame(height: 5)
     }
 
-    private func cellColor(isWork: Bool) -> Color {
-        if isWork { return Color(red: 95/255, green: 207/255, blue: 138/255).opacity(0.55) }
-        return Color.white.opacity(0.06)
+    private func isWorkAt(hostHour: Double) -> Bool {
+        let lh = TimeMath.hourInTz(
+            hostHour: hostHour,
+            hostOffset: state.hostOffsetHours,
+            targetOffset: group.offsetHours(at: state.hostInstant)
+        )
+        return TimeMath.isInWorkHours(
+            localHour: lh, workStart: group.workStart, workEnd: group.workEnd
+        )
     }
 
     // MARK: - Member chips
@@ -235,6 +241,35 @@ struct CityCardView: View {
                 MemberChipView(person: p)
             }
         }
+    }
+}
+
+/// One hour cell in the home page's city strip. Internally divided into
+/// two 30-min halves so half-hour work boundaries (e.g. 9:30 → 23:00)
+/// render correctly without inflating the cell count.
+private struct HalfHourCell: View {
+    let firstHalf: Bool
+    let secondHalf: Bool
+
+    private static let workColor = Color(red: 95/255, green: 207/255, blue: 138/255).opacity(0.55)
+    private static let bgColor = Color.white.opacity(0.06)
+
+    var body: some View {
+        ZStack(alignment: .leading) {
+            RoundedRectangle(cornerRadius: 1).fill(Self.bgColor)
+            GeometryReader { geo in
+                if firstHalf {
+                    Rectangle().fill(Self.workColor)
+                        .frame(width: geo.size.width * 0.5)
+                }
+                if secondHalf {
+                    Rectangle().fill(Self.workColor)
+                        .frame(width: geo.size.width * 0.5)
+                        .offset(x: geo.size.width * 0.5)
+                }
+            }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 1))
     }
 }
 

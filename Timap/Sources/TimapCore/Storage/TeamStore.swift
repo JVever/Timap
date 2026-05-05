@@ -10,6 +10,15 @@ public enum TeamStore {
     // Legacy key from the per-teammate hide era. Read-only for migration.
     private static let legacyHiddenIDsKey = "timap.hiddenIDs"
 
+    /// Round a work-hour double to the nearest 30-min mark. Old data from
+    /// the 0.25h-step era can carry values like 9.75; keeping them runs
+    /// fine in the math but makes the 0.5h sampling produce a window that
+    /// silently drops the partial half-hour (e.g. workStart=9.75 with
+    /// step=0.5 starts the window at 10.0 instead of 9.5).
+    static func quantize(_ h: Double) -> Double {
+        (h * 2).rounded() / 2
+    }
+
     public struct Snapshot {
         public var team: [Teammate]
         public var home: EmptyCityRecord?
@@ -42,7 +51,12 @@ public enum TeamStore {
             // team so the user has something to play with.
             rawTeam = DefaultTeam.teammates()
         }
-        let team = CityCanonicalizer.normalize(rawTeam)
+        let team = CityCanonicalizer.normalize(rawTeam).map { p -> Teammate in
+            var q = p
+            q.workStart = quantize(p.workStart)
+            q.workEnd = max(q.workStart + 0.5, quantize(p.workEnd))
+            return q
+        }
         // Only rewrite the persisted blob if we successfully decoded the
         // user's actual data. If the payload was corrupted we leave the
         // bytes in place — the user can recover them by, say, downgrading
@@ -64,9 +78,11 @@ public enum TeamStore {
             homeRaw = migratedHome
         }
         let home: EmptyCityRecord? = homeRaw.map {
-            EmptyCityRecord(
+            let qs = quantize($0.workStart)
+            return EmptyCityRecord(
                 city: CityCanonicalizer.canonicalize($0.city),
-                workStart: $0.workStart, workEnd: $0.workEnd
+                workStart: qs,
+                workEnd: max(qs + 0.5, quantize($0.workEnd))
             )
         }
         if let home = home, let data = try? JSONEncoder().encode(home) {
@@ -84,10 +100,14 @@ public enum TeamStore {
             extraCitiesRaw = []
         }
         let extraCities: [EmptyCityRecord] = extraCitiesRaw
-            .map { EmptyCityRecord(
-                city: CityCanonicalizer.canonicalize($0.city),
-                workStart: $0.workStart, workEnd: $0.workEnd
-            ) }
+            .map { rec -> EmptyCityRecord in
+                let qs = quantize(rec.workStart)
+                return EmptyCityRecord(
+                    city: CityCanonicalizer.canonicalize(rec.city),
+                    workStart: qs,
+                    workEnd: max(qs + 0.5, quantize(rec.workEnd))
+                )
+            }
             .filter { $0.city.name != home?.city.name }
 
         let hiddenCities: Set<String>

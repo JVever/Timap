@@ -244,24 +244,37 @@ public final class AppState: ObservableObject {
     }
 
     /// Team list used by meeting-score / best-window calculations. Includes
-    /// every visible city the user cares about: real teammates, the home
-    /// record (so the user's own work hours always constrain the window),
-    /// and `extraCities` (empty placeholders the user added because they
-    /// want that timezone factored in even without a specific colleague).
-    /// Hidden cities are filtered from all three sources. Without this,
-    /// adding "Boston" as an empty city wouldn't shrink the suggestion
-    /// window — the intersection wouldn't see Boston at all.
+    /// every visible city the user cares about: home (always — the user's
+    /// own work hours must constrain the window), real teammates, and
+    /// `extraCities` (empty placeholders the user added because they want
+    /// that timezone factored in even without a specific colleague).
+    /// Hidden cities are filtered from team and extraCities. Each city
+    /// contributes at most ONE constraint — if a teammate lives in the
+    /// home city, or extraCities and team both reference the same city
+    /// (e.g. through a migration), the duplicate is dropped so the same
+    /// work-hours interval doesn't get applied twice and silently shrink
+    /// the suggestion window.
     public var scoringTeam: [Teammate] {
-        var result = team.filter { !hiddenCities.contains($0.city) }
+        var seen = Set<String>()
+        var result: [Teammate] = []
+
         if let home = home {
             result.append(virtualTeammate(
                 city: home.city, workStart: home.workStart, workEnd: home.workEnd
             ))
+            seen.insert(home.city.name)
+        }
+        for p in team where !hiddenCities.contains(p.city) {
+            if seen.insert(p.city).inserted {
+                result.append(p)
+            }
         }
         for rec in extraCities where !hiddenCities.contains(rec.city.name) {
-            result.append(virtualTeammate(
-                city: rec.city, workStart: rec.workStart, workEnd: rec.workEnd
-            ))
+            if seen.insert(rec.city.name).inserted {
+                result.append(virtualTeammate(
+                    city: rec.city, workStart: rec.workStart, workEnd: rec.workEnd
+                ))
+            }
         }
         return result
     }
@@ -350,8 +363,11 @@ public final class AppState: ObservableObject {
     /// matching extraCities entry (if it's an empty city), and every
     /// teammate in that city. All three sources are kept in sync because
     /// the visible card pulls from one of them.
-    public func setCityWorkHours(_ city: String, start: Double, end: Double) {
-        let cleanEnd = max(start + 0.25, end)
+    public func setCityWorkHours(_ city: String, start rawStart: Double, end rawEnd: Double) {
+        // Quantize to 30-min grid — the global minimum time scale. Anything
+        // finer can't be meaningfully represented on the slider or strips.
+        let start = (rawStart * 2).rounded() / 2
+        let cleanEnd = max(start + 0.5, (rawEnd * 2).rounded() / 2)
         for i in team.indices where team[i].city == city {
             team[i].workStart = start
             team[i].workEnd = cleanEnd

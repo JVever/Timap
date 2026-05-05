@@ -76,13 +76,14 @@ public enum TimeMath {
 
     /// DST-correct version: re-evaluates host + teammate offsets per
     /// candidate hour. Pass the host's actual calendar date and tz; the
-    /// 96-step iteration handles a transition inside the slider's range.
+    /// 48-step iteration (0.5h granularity) handles a transition inside
+    /// the slider's range.
     public static func findBestWindows(
         hostDate: Date,
         hostTimeZone: TimeZone,
         team: [Teammate]
     ) -> [Window] {
-        let step = 0.25
+        let step = 0.5
         var windows: [Window] = []
         var current: Window? = nil
         var h = 0.0

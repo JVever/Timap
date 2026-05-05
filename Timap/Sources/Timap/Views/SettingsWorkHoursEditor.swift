@@ -2,8 +2,8 @@ import SwiftUI
 import TimapCore
 
 /// 6px-tall 24-cell hour strip with two drag handles. Visual rebuild of
-/// `WorkHoursEditorD` from `settings-v1d.jsx`. Snap step is 0.25h (15 min);
-/// fractional cells render the partial coverage so a 9:30 → 18:45 selection
+/// `WorkHoursEditorD` from `settings-v1d.jsx`. Snap step is 0.5h (30 min);
+/// fractional cells render the partial coverage so a 9:30 → 18:30 selection
 /// looks pixel-correct rather than rounding to whole hours.
 struct WorkHoursStripEditor: View {
     let workStart: Double
@@ -13,7 +13,7 @@ struct WorkHoursStripEditor: View {
 
     private static let stripHeight: CGFloat = 6
     private static let hitPad: CGFloat = 10
-    private static let step: Double = 0.25
+    private static let step: Double = 0.5
     private static let coordSpace = "WorkHoursStrip"
 
     @State private var dragging: DragTarget? = nil

@@ -467,14 +467,14 @@ do {
         }
     }
 
-    // Non-integer work hours are honored (e.g. 9:30-17:45).
+    // Half-hour work hours are honored (e.g. 9:30-17:30).
     do {
-        let p = teammate(name: "P", offset: 0, ws: 9.5, we: 17.75)
+        let p = teammate(name: "P", offset: 0, ws: 9.5, we: 17.5)
         let wins = TimeMath.findBestWindows(hostOffset: 0, team: [p])
-        check(wins.count == 1, "Fractional work hours → one window")
+        check(wins.count == 1, "Half-hour work hours → one window")
         if let w = wins.first {
-            check(approx(w.start, 9.5) && approx(w.end, 17.75),
-                  "Window respects 0.25h grid", "got [\(w.start), \(w.end))")
+            check(approx(w.start, 9.5) && approx(w.end, 17.5),
+                  "Window respects 0.5h grid", "got [\(w.start), \(w.end))")
         }
     }
 
@@ -732,6 +732,116 @@ do {
     }
     state.hiddenCities.remove("Boston")
 }
+
+// setCityWorkHours quantizes to 0.5h grid and updates scoringTeam, so a
+// settings-page edit immediately reflects in the home suggestion window.
+@MainActor func runWorkHoursLiveRefreshTest() {
+    let beijing = City(name: "Beijing", nameZh: "北京",
+                       country: "CN", flag: "🇨🇳",
+                       lat: 39.9, lng: 116.4, tz: "Asia/Shanghai")
+    let state = AppState(
+        team: [],
+        home: EmptyCityRecord(city: beijing, workStart: 9, workEnd: 23),
+        extraCities: [],
+        hiddenCities: [],
+        hasOnboarded: true,
+        language: .zh
+    )
+    // Initial: home work 9-23 → window [9, 23) Beijing.
+    let w0 = TimeMath.findBestWindows(
+        hostDate: state.hostDate, hostTimeZone: state.hostTimeZone, team: state.scoringTeam
+    )
+    check(w0.count == 1 && approx(w0[0].start, 9) && approx(w0[0].end, 23),
+          "Pre-edit window [9, 23)", "got \(w0)")
+
+    // Simulate user dragging start handle to 9:30 in settings.
+    state.setCityWorkHours("Beijing", start: 9.5, end: 23)
+    check(state.home?.workStart == 9.5,
+          "home.workStart updated to 9.5", "got \(state.home?.workStart ?? -1)")
+
+    let w1 = TimeMath.findBestWindows(
+        hostDate: state.hostDate, hostTimeZone: state.hostTimeZone, team: state.scoringTeam
+    )
+    check(w1.count == 1 && approx(w1[0].start, 9.5) && approx(w1[0].end, 23),
+          "After edit, suggestion shifts to [9:30, 23)", "got \(w1)")
+
+    // Non-grid value gets quantized.
+    state.setCityWorkHours("Beijing", start: 9.75, end: 23)
+    check(state.home?.workStart == 10,
+          "9.75 quantizes up to 10", "got \(state.home?.workStart ?? -1)")
+    state.setCityWorkHours("Beijing", start: 9.2, end: 23)
+    check(state.home?.workStart == 9,
+          "9.2 quantizes down to 9", "got \(state.home?.workStart ?? -1)")
+
+    // citiesGrouped — the source the home view's CityCardView reads —
+    // must reflect the latest work-hour edit, not a stale snapshot.
+    state.setCityWorkHours("Beijing", start: 9.5, end: 22)
+    let bjGroup = state.citiesGrouped.first { $0.city == "Beijing" }
+    check(bjGroup?.workStart == 9.5 && bjGroup?.workEnd == 22,
+          "citiesGrouped reflects edit immediately",
+          "got \(bjGroup?.workStart ?? -1)-\(bjGroup?.workEnd ?? -1)")
+}
+Task { @MainActor in runWorkHoursLiveRefreshTest() }
+RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+
+// scoringTeam dedup: a city must contribute at most one constraint, even
+// when it appears in multiple sources (Codex review finding).
+@MainActor func runScoringTeamDedupTest() {
+    let beijing = City(name: "Beijing", nameZh: "北京",
+                       country: "CN", flag: "🇨🇳",
+                       lat: 39.9, lng: 116.4, tz: "Asia/Shanghai")
+    let seattle = City(name: "Seattle", nameZh: "西雅图",
+                       country: "US", flag: "🇺🇸",
+                       lat: 47.6, lng: -122.3, tz: "America/Los_Angeles")
+
+    // 1) Teammate in home city — home wins, teammate dedup'd out.
+    do {
+        let mira = Teammate(
+            name: "Mira", role: "",
+            city: "Beijing", cityZh: "北京", country: "CN", flag: "🇨🇳",
+            tzIdentifier: "Asia/Shanghai", lat: 39.9, lng: 116.4,
+            workStart: 10, workEnd: 18, colorHex: "#000"
+        )
+        let state = AppState(
+            team: [mira],
+            home: EmptyCityRecord(city: beijing, workStart: 9, workEnd: 23),
+            extraCities: [],
+            hiddenCities: [],
+            hasOnboarded: true,
+            language: .zh
+        )
+        let bjEntries = state.scoringTeam.filter { $0.city == "Beijing" }
+        check(bjEntries.count == 1, "home + teammate same city → single entry",
+              "got \(bjEntries.count)")
+        check(bjEntries.first?.workStart == 9 && bjEntries.first?.workEnd == 23,
+              "Home record wins for shared city",
+              "got \(bjEntries.first?.workStart ?? -1)-\(bjEntries.first?.workEnd ?? -1)")
+    }
+
+    // 2) Same city in team and extraCities — first occurrence wins, no
+    // double-counting (the bug Codex flagged).
+    do {
+        let teemo = Teammate(
+            name: "Teemo", role: "",
+            city: "Seattle", cityZh: "西雅图", country: "US", flag: "🇺🇸",
+            tzIdentifier: "America/Los_Angeles", lat: 47.6, lng: -122.3,
+            workStart: 9, workEnd: 23, colorHex: "#000"
+        )
+        let state = AppState(
+            team: [teemo],
+            home: EmptyCityRecord(city: beijing, workStart: 9, workEnd: 23),
+            extraCities: [EmptyCityRecord(city: seattle, workStart: 9, workEnd: 23)],
+            hiddenCities: [],
+            hasOnboarded: true,
+            language: .zh
+        )
+        let seaEntries = state.scoringTeam.filter { $0.city == "Seattle" }
+        check(seaEntries.count == 1, "team + extraCities same city → single entry",
+              "got \(seaEntries.count)")
+    }
+}
+Task { @MainActor in runScoringTeamDedupTest() }
+RunLoop.main.run(until: Date().addingTimeInterval(0.05))
 Task { @MainActor in runScoringTeamCoverageTest() }
 RunLoop.main.run(until: Date().addingTimeInterval(0.05))
 
@@ -765,8 +875,11 @@ RunLoop.main.run(until: Date().addingTimeInterval(0.05))
     state.setHomeCity("Seattle")
     check(!state.hiddenCities.contains("Seattle"),
           "After setHomeCity('Seattle'), hiddenCities no longer contains Seattle")
-    check(state.scoringTeam.contains { $0.city == "Seattle" && $0.name == "Mira" },
-          "After promotion, Mira appears in scoringTeam")
+    // After promotion Seattle is the home; the dedup keeps a single Seattle
+    // entry in scoringTeam (the home virtual). What matters is that Mira's
+    // city is no longer filtered out.
+    check(state.scoringTeam.contains { $0.city == "Seattle" },
+          "After promotion, Seattle is represented in scoringTeam")
 }
 Task { @MainActor in runHomeHiddenTest() }
 // Run synchronously since the rest of the file is sync. The Task above

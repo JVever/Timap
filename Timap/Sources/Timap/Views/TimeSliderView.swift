@@ -106,9 +106,9 @@ struct TimeSliderView: View {
                 DragGesture(minimumDistance: 0)
                     .onChanged { g in
                         let frac = max(0, min(1, g.location.x / w))
-                        // 15-min snap across the full [0, 24] range so the
+                        // 30-min snap across the full [0, 24] range so the
                         // thumb can park at both ends of the rail.
-                        let snapped = (frac * 96).rounded() / 4
+                        let snapped = (frac * 48).rounded() / 2
                         state.setHostHour(min(24, snapped))
                     }
             )
