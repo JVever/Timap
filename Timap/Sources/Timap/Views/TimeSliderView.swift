@@ -93,7 +93,7 @@ struct TimeSliderView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 3))
                     .opacity(isActive ? Self.standardActive : 1)
                     .offset(x: win.start / 24 * w)
-                    .animation(.easeInOut(duration: 0.2), value: isActive)
+                    .animation(.easeInOut(duration: 0.25), value: isActive)
                 }
 
                 // Thumb
@@ -123,7 +123,7 @@ struct TimeSliderView: View {
             .padding(2.5)
             .background(Circle().fill(v11BgInner))
             .shadow(color: thumbColor.opacity(0.67), radius: 6, x: 0, y: 1)
-            .animation(.easeInOut(duration: 0.2), value: thumbColor)
+            .animation(.easeInOut(duration: 0.25), value: thumbColor)
     }
 
     // MARK: - Hour labels under track

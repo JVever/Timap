@@ -68,7 +68,11 @@ struct HeaderView: View {
             .lineLimit(1)
             .fixedSize()
             .contentShape(Rectangle())
-            .onTapGesture { state.jumpToBestWindow() }
+            .onTapGesture {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    state.jumpToBestWindow()
+                }
+            }
             .help(state.tr(.jumpToBestSlotTooltip))
             .animation(.easeInOut(duration: 0.25), value: timeColor)
     }
@@ -129,7 +133,11 @@ struct HeaderView: View {
     private var nowButton: some View {
         let isAtNow = state.isLive
         return Button {
-            if !isAtNow { state.goLive() }
+            if !isAtNow {
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    state.goLive()
+                }
+            }
         } label: {
             HStack(spacing: 6) {
                 Circle()
@@ -151,7 +159,7 @@ struct HeaderView: View {
         .buttonStyle(.plain)
         .disabled(isAtNow)
         .help(state.tr(isAtNow ? .atNowTooltip : .goLiveTooltip))
-        .animation(.easeInOut(duration: 0.2), value: isAtNow)
+        .animation(.easeInOut(duration: 0.25), value: isAtNow)
     }
 
     private var gearButton: some View {

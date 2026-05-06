@@ -76,8 +76,8 @@ struct CityCardView: View {
         )
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .opacity(hidden ? 0.55 : 1)
-        .animation(.easeInOut(duration: 0.2), value: cityColor)
-        .animation(.easeInOut(duration: 0.2), value: hidden)
+        .animation(.easeInOut(duration: 0.25), value: cityColor)
+        .animation(.easeInOut(duration: 0.25), value: hidden)
     }
 
     private func cardBackground(inWork: Bool) -> some View {
@@ -202,15 +202,6 @@ struct CityCardView: View {
                     .frame(width: 1.5, height: 11)
                     .shadow(color: bdAccent, radius: 2)
                     .offset(x: state.hostHour / 24 * w - 0.75, y: -3)
-                    // Opt out of the card-level `.animation(value: cityColor)`
-                    // / `.animation(value: hidden)` modifiers below — without
-                    // this, on hostHour jumps that *also* cross a work-hours
-                    // boundary, the parent animation captures this offset and
-                    // the line slides over 0.2s; on cards that *don't* cross
-                    // a boundary, it snaps. Result was different-speed lines
-                    // across cards. This indicator is a position scale, not
-                    // a decoration; snap is the right semantic.
-                    .transaction { $0.animation = nil }
             }
             // Restore the strip-as-scrubber affordance from the pre-v11
             // rows: tap or drag anywhere on the strip to set hostHour, at
