@@ -1005,6 +1005,17 @@ do {
     check(tokyo?.workStart == 9 && tokyo?.workEnd == 18, "Empty city carries its own work hours")
 }
 
+// Brand assets — guard against accidental deletion of the icns/SVGs that
+// `make bundle` copies into the .app. The check is path-based because
+// BrandIcon is in the Timap (AppKit) target, not importable from here.
+do {
+    let cwd = FileManager.default.currentDirectoryPath
+    for rel in ["Resources/Timap.icns", "Resources/Timap-AppIcon.svg"] {
+        let path = "\(cwd)/\(rel)"
+        check(FileManager.default.fileExists(atPath: path), "brand asset present: \(rel)")
+    }
+}
+
 print("──────────────────────────────")
 if failures == 0 {
     print("All checks passed ✓")

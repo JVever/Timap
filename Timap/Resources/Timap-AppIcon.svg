@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Timap App Icon</title>
+  <!-- Rounded white tile (brand-kit hero ratio: 64/280 ≈ 22.86%, here 234/1024). -->
+  <rect x="0" y="0" width="1024" height="1024" rx="234" ry="234" fill="#ffffff"/>
+  <rect x="399.68" y="251" width="241.92" height="114" rx="17.1" fill="#5fcf8a"/>
+  <rect x="80"     y="455" width="561.6"  height="114" rx="17.1" fill="#0d1420"/>
+  <rect x="399.68" y="659" width="544.32" height="114" rx="17.1" fill="#0d1420"/>
+</svg>

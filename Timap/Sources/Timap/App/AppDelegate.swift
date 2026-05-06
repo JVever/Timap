@@ -29,11 +29,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func setUp() {
-        // Status item — small globe icon in the menu bar.
+        // Status item — Timap brand mark (framed three-bar icon) in the
+        // menu bar. The image is drawn programmatically as a template so
+        // AppKit auto-tints for light/dark menubar.
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "globe", accessibilityDescription: "Timap")
-            button.image?.isTemplate = true
+            button.image = BrandIcon.makeMenubarTemplate()
             button.action = #selector(togglePopover(_:))
             button.target = self
         }

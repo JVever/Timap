@@ -1,0 +1,9 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="36" height="36">
+  <title>Timap (framed)</title>
+  <rect x="56" y="56" width="912" height="912" rx="220" fill="none" stroke="currentColor" stroke-width="56"></rect>
+  
+  <rect x="420" y="251" width="220" height="114" rx="17.1" fill="currentColor"></rect>
+  <rect x="160" y="455" width="500" height="114" rx="17.1" fill="currentColor"></rect>
+  <rect x="420" y="659" width="480" height="114" rx="17.1" fill="currentColor"></rect>
+</svg>
