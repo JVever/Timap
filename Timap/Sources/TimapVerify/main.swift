@@ -74,14 +74,17 @@ do {
     check(off == -8 || off == -7, "Seattle current offset is either -8 (PST) or -7 (PDT), got \(off)")
 }
 
-// Storage round-trip — new model: home is a top-level slot, no me teammate
+// Storage round-trip — new model: home is a top-level slot, no me teammate.
+// First-launch seed: empty team + a few example empty cities (no fake
+// teammate names, since those previously misled new users).
 do {
     TeamStore.reset()
     let snap1 = TeamStore.load()
-    check(snap1.team.count == 3, "Default team has 3 members on first load")
+    check(snap1.team.isEmpty, "First-load team is empty (no fake demo teammates)")
     check(snap1.home == nil, "First-load home is nil (not yet onboarded)")
     check(snap1.hasOnboarded == false, "First-load hasOnboarded == false")
-    check(snap1.extraCities.isEmpty, "First-load extraCities is empty")
+    check(snap1.extraCities.count == DefaultTeam.demoCities().count,
+          "First-load extraCities seeded with demo cities")
 
     let beijing = City(name: "Beijing", nameZh: "北京",
                       country: "CN", flag: "🇨🇳",
@@ -98,13 +101,13 @@ do {
                    hiddenCities: [], hasOnboarded: true, language: .en)
 
     let snap2 = TeamStore.load()
-    check(snap2.team.count == 3, "After save+reload, team count == 3 (no me teammate added)")
+    check(snap2.team.isEmpty, "After save+reload, team stays empty (no me teammate added)")
     check(snap2.hasOnboarded, "hasOnboarded round-trips")
     check(snap2.home?.city.name == "Beijing", "home round-trips")
     check(snap2.home?.workStart == 9, "home work hours round-trip")
     check(snap2.language == .en, "language round-trips")
     check(snap2.extraCities.count == 1 && snap2.extraCities.first?.city.name == "Tokyo",
-          "extraCities round-trips through TeamStore")
+          "extraCities round-trips through TeamStore (demo seed not re-applied after explicit save)")
     check(snap2.extraCities.first?.workStart == 10, "extraCities work hours round-trip")
 
     TeamStore.reset()
@@ -1014,6 +1017,32 @@ do {
         let path = "\(cwd)/\(rel)"
         check(FileManager.default.fileExists(atPath: path), "brand asset present: \(rel)")
     }
+}
+
+// First-launch demo cities: must be non-empty, every entry must have a
+// resolvable IANA tz, and none should match a teammate name (they're
+// city cards, not personas). Also pins the project-wide default work
+// hours convention (9–23) — every default-creating call site must agree.
+do {
+    let demos = DefaultTeam.demoCities()
+    check(!demos.isEmpty, "demoCities seeds at least one example city")
+    for rec in demos {
+        check(!rec.city.name.isEmpty, "demo city has a name")
+        check(TimeZone(identifier: rec.city.tz) != nil,
+              "demo city tz is valid IANA: \(rec.city.tz)")
+        check(rec.workStart == 9 && rec.workEnd == 23,
+              "demo city uses canonical 9–23 default: \(rec.city.name)")
+    }
+
+    // Same convention must hold for EmptyCityRecord's struct default and
+    // for AppState's onboarding/add-city entry points. Anchoring the
+    // default in one place would be cleaner; until then this guards
+    // against the values drifting apart again.
+    let dummy = City(name: "X", country: "X", flag: "🌐",
+                     lat: 0, lng: 0, tz: "UTC")
+    let recDefault = EmptyCityRecord(city: dummy)
+    check(recDefault.workStart == 9 && recDefault.workEnd == 23,
+          "EmptyCityRecord default work hours = 9–23")
 }
 
 print("──────────────────────────────")

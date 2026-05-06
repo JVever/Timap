@@ -202,6 +202,15 @@ struct CityCardView: View {
                     .frame(width: 1.5, height: 11)
                     .shadow(color: bdAccent, radius: 2)
                     .offset(x: state.hostHour / 24 * w - 0.75, y: -3)
+                    // Opt out of the card-level `.animation(value: cityColor)`
+                    // / `.animation(value: hidden)` modifiers below — without
+                    // this, on hostHour jumps that *also* cross a work-hours
+                    // boundary, the parent animation captures this offset and
+                    // the line slides over 0.2s; on cards that *don't* cross
+                    // a boundary, it snaps. Result was different-speed lines
+                    // across cards. This indicator is a position scale, not
+                    // a decoration; snap is the right semantic.
+                    .transaction { $0.animation = nil }
             }
             // Restore the strip-as-scrubber affordance from the pre-v11
             // rows: tap or drag anywhere on the strip to set hostHour, at
@@ -280,7 +289,7 @@ private struct MemberChipView: View {
 
     var body: some View {
         HStack(spacing: 6) {
-            MemberAvatar(person: person)
+            AvatarView(person: person, size: 20)
             Text(person.name)
                 .font(.system(size: 11.5, weight: .medium))
                 .foregroundColor(.white.opacity(0.55))
@@ -297,20 +306,5 @@ private struct MemberChipView: View {
                         .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
                 )
         )
-    }
-}
-
-private struct MemberAvatar: View {
-    let person: Teammate
-
-    var body: some View {
-        ZStack {
-            Circle()
-                .fill(Color(hex: person.colorHex))
-            Text(person.initials)
-                .font(.system(size: 9, weight: .bold))
-                .foregroundColor(.white)
-        }
-        .frame(width: 20, height: 20)
     }
 }

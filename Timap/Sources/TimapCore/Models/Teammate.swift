@@ -204,4 +204,40 @@ public enum DefaultTeam {
             )
         ]
     }
+
+    /// First-launch seed for `extraCities`: a few empty city cards so the
+    /// home page isn't a single lonely card on day one. No teammate names,
+    /// no fake personas — just example cities the user can either fill
+    /// with real coworkers or remove.
+    public static func demoCities() -> [EmptyCityRecord] {
+        [
+            EmptyCityRecord(
+                city: City(
+                    name: "Seattle", nameZh: "西雅图",
+                    country: "US", flag: "🇺🇸",
+                    lat: 47.6, lng: -122.3,
+                    tz: "America/Los_Angeles"
+                ),
+                workStart: 9, workEnd: 23
+            ),
+            EmptyCityRecord(
+                city: City(
+                    name: "Boston", nameZh: "波士顿",
+                    country: "US", flag: "🇺🇸",
+                    lat: 42.4, lng: -71.1,
+                    tz: "America/New_York"
+                ),
+                workStart: 9, workEnd: 23
+            ),
+            EmptyCityRecord(
+                city: City(
+                    name: "Chicago", nameZh: "芝加哥",
+                    country: "US", flag: "🇺🇸",
+                    lat: 41.9, lng: -87.6,
+                    tz: "America/Chicago"
+                ),
+                workStart: 9, workEnd: 23
+            )
+        ]
+    }
 }

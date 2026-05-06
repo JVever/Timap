@@ -31,6 +31,13 @@ public enum TeamStore {
     public static func load() -> Snapshot {
         let defaults = UserDefaults.standard
 
+        // First-launch detection: both team and extraCities keys absent.
+        // Used below to seed example city cards (no fake teammate names —
+        // those previously confused new users into thinking they were
+        // pre-populated real data).
+        let isFirstLaunch = defaults.data(forKey: teamKey) == nil
+                         && defaults.data(forKey: extraCitiesKey) == nil
+
         // Step 1 — migrate `isMe:true` teammates from older schemas. The
         // current Teammate model has no `isMe` field; if a saved entry
         // had one, we extract its city info into a `home` record and drop
@@ -47,9 +54,9 @@ public enum TeamStore {
             migratedHome = result.home
             teamDataIsValid = result.decodedCleanly
         } else {
-            // Truly first-launch — no persisted team. Seed with the demo
-            // team so the user has something to play with.
-            rawTeam = DefaultTeam.teammates()
+            // Truly first-launch — no persisted team. Start with no
+            // teammates; example cities are seeded into extraCities below.
+            rawTeam = []
         }
         let team = CityCanonicalizer.normalize(rawTeam).map { p -> Teammate in
             var q = p
@@ -96,6 +103,8 @@ public enum TeamStore {
         if let data = defaults.data(forKey: extraCitiesKey),
            let decoded = try? JSONDecoder().decode([EmptyCityRecord].self, from: data) {
             extraCitiesRaw = decoded
+        } else if isFirstLaunch {
+            extraCitiesRaw = DefaultTeam.demoCities()
         } else {
             extraCitiesRaw = []
         }

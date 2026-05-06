@@ -8,7 +8,7 @@ BUNDLE   := .build/release/Timap_TimapCore.bundle
 ICON_SRC := Resources/Timap-AppIcon.svg
 ICON     := Resources/Timap.icns
 
-.PHONY: all build bundle run verify clean install dmg screenshot icon help
+.PHONY: all build bundle run verify reset clean install dmg screenshot icon help
 
 all: bundle
 
@@ -73,6 +73,15 @@ run: bundle
 verify:
 	swift run TimapVerify
 
+# Reset onboarding + persisted team to first-launch state. Useful when
+# iterating on the onboarding UI: `make reset` then re-open Timap.app to
+# see the OnboardingView again.
+reset:
+	@pkill -x Timap 2>/dev/null || true
+	@defaults delete com.timap.app 2>/dev/null || true
+	@echo "✓ Cleared persisted state for com.timap.app"
+	@echo "  Re-launch with: open /Applications/Timap.app"
+
 clean:
 	rm -rf .build dist
 
@@ -113,4 +122,5 @@ help:
 	@echo "make dmg       — 生成 dist/Timap-<version>.dmg 安装镜像"
 	@echo "make screenshot[OUT=...]  — 让运行中的 Timap 自截 popover 截图"
 	@echo "make icon      — 从 Resources/Timap-AppIcon.svg 重新生成 Timap.icns"
+	@echo "make reset     — 清空持久化数据，回到首次启动状态（测 onboarding 用）"
 	@echo "make clean     — 清理构建产物和 dist"

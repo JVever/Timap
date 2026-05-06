@@ -40,7 +40,7 @@ public struct EmptyCityRecord: Codable, Hashable, Identifiable {
 
     public var id: String { city.name }
 
-    public init(city: City, workStart: Double = 9, workEnd: Double = 18) {
+    public init(city: City, workStart: Double = 9, workEnd: Double = 23) {
         self.city = city
         self.workStart = workStart
         self.workEnd = workEnd
