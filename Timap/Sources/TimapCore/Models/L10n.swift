@@ -26,8 +26,10 @@ public enum L10n {
         case hiddenSep, clickToHide, clickToInclude
         // City cards (v11)
         case home
-        // Onboarding
+        // Onboarding (v2 — 2-step welcome + city pick redesign)
         case welcome, whereBased, locationHint, getStarted, locationSearchPlaceholder
+        case welcomeSub, welcomeBullet1, welcomeBullet2, welcomeBullet3
+        case onbNext, onbHotLabel, onbResultsLabel, onbSelectToContinue, onbBack
         // Settings
         case settings, done, quitApp
         case sectionLocation, sectionWorkHours, sectionTeammates, sectionLanguage
@@ -133,6 +135,15 @@ public enum L10n {
         .locationHint:               "这将作为你的本地时区。可以稍后在设置中更改。",
         .getStarted:                 "开始使用",
         .locationSearchPlaceholder:  "输入城市 — 例如：北京、伦敦、东京",
+        .welcomeSub:                 "为跨时区的团队，找到一起在线的最佳时刻。",
+        .welcomeBullet1:             "看清每个城市当下是清晨、午后，还是深夜",
+        .welcomeBullet2:             "一眼找到所有人都在工作时间的会议时段",
+        .welcomeBullet3:             "常驻菜单栏，随时拉出，随时收起",
+        .onbNext:                    "下一步",
+        .onbHotLabel:                "常用城市",
+        .onbResultsLabel:            "搜索结果",
+        .onbSelectToContinue:        "选择一个城市",
+        .onbBack:                    "返回",
         .settings:                   "设置",
         .done:                       "完成",
         .quitApp:                    "退出 Timap",
@@ -202,7 +213,16 @@ public enum L10n {
         .whereBased:                 "Where are you based?",
         .locationHint:               "This becomes your home time zone. You can change it later in Settings.",
         .getStarted:                 "Get started",
-        .locationSearchPlaceholder:  "Type your city — e.g., Beijing, London, Tokyo",
+        .locationSearchPlaceholder:  "Type a city — e.g., Beijing, London, Tokyo",
+        .welcomeSub:                 "Find the time that works for your team — across cities, across time zones.",
+        .welcomeBullet1:             "See morning, afternoon and night across every city at a glance",
+        .welcomeBullet2:             "Spot the windows where everyone's in working hours",
+        .welcomeBullet3:             "Lives in the menu bar — pull it open, dismiss it, repeat",
+        .onbNext:                    "Next",
+        .onbHotLabel:                "Popular",
+        .onbResultsLabel:            "Results",
+        .onbSelectToContinue:        "Select a city to continue",
+        .onbBack:                    "Back",
         .settings:                   "Settings",
         .done:                       "Done",
         .quitApp:                    "Quit Timap",
