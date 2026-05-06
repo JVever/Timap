@@ -14,5 +14,11 @@ xcuserdata/
 .vscode/
 .idea/
 
+# Claude Code workspace (per-machine collaboration settings)
+.claude/
+
+# Distribution artifacts checked into git via Releases, not the tree
+*.dmg
+
 # Node (if any tooling lands here)
 node_modules/
