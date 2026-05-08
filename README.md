@@ -114,17 +114,17 @@ make run
 <p align="center">
   <img src="docs/screenshots/06-onboarding-welcome.png" width="240" alt="欢迎页 · logo 装配完成" />
   <img src="docs/screenshots/07-onboarding-citypick.png" width="240" alt="城市选择 · 5 个常用城市芯片 + 完整城市列表" />
-  <img src="docs/screenshots/08-onboarding-citypick-selected.png" width="240" alt="选中北京后底部出现绿色预览卡 + 激活的 CTA" />
+  <img src="docs/screenshots/08-onboarding-citypick-selected.png" width="240" alt="选中北京后底部出现绿色预览卡 + 激活的「开始使用」按钮" />
 </p>
 
 <p align="center"><sub>欢迎页 → 选你的城市 → 确认进入主界面</sub></p>
 
 ### 2. 添加同事
 
-进入 Settings（齿轮图标）→ 在每张城市卡上点 "+ 同事" 加入团队成员；底部 "+ 添加新城市" 加更多城市。每位同事的工作时段可独立设置（30 分钟步进），头像支持上传图片或姓名首字母自动生成。catalog 里没有的城市可以手动添加经纬度。
+进入 Settings（齿轮图标）→ 在每张城市卡上点 "+ 同事" 加入团队成员；底部 "+ 添加新城市" 加更多城市。每位同事的工作时段可独立设置（30 分钟步进），头像支持上传图片或姓名首字母自动生成。内置城市库里没有的城市可以手动添加经纬度。
 
 <p align="center">
-  <img src="docs/screenshots/04-settings.png" width="420" alt="设置页：每个城市一张卡，工作时长可调，同事 chip 支持头像和名字" />
+  <img src="docs/screenshots/04-settings.png" width="420" alt="设置页：每个城市一张卡，工作时段可调，同事标签支持头像和名字" />
 </p>
 
 ### 3. 看图办事
@@ -166,7 +166,7 @@ make run
 |---|---|
 | 加一座城市 | `Timap/Sources/TimapCore/Resources/cities.json` |
 | 加新的 UI / 调整布局 | `Timap/Sources/Timap/Views/` |
-| 调时间数学 / 持久化 / 地理 | `Timap/Sources/TimapCore/` + 在 `TimapVerify/main.swift` 加断言 |
+| 调时间 / 时区计算 / 持久化 / 地理 | `Timap/Sources/TimapCore/` + 在 `TimapVerify/main.swift` 加断言 |
 | 加新文案 / i18n | `Timap/Sources/TimapCore/Models/L10n.swift` 同时改 zh + en |
 | 改菜单栏 / Dock 图标 | `Timap/Sources/Timap/Brand/BrandIcon.swift` 或 `Timap/Resources/Timap-AppIcon.svg` |
 | 调 onboarding 流程 | `Timap/Sources/Timap/Views/OnboardingView.swift` |
@@ -186,7 +186,7 @@ make reset     # 清持久化数据，回到首启状态（开发 onboarding 必
 
 macOS 上只装了 Command Line Tools（没装完整 Xcode）的环境不带 XCTest，`swift test` 跑不起来。所以仓库里有一个 `TimapVerify` executable target —— 用最朴素的 `check(condition, "name")` 模式覆盖 `TimapCore` 的逻辑分支。**改 `TimapCore` 里的逻辑请同步在 `TimapVerify/main.swift` 里加断言**，这是仓库唯一的回归测试机制。
 
-更详细的架构、设计决策、踩过的坑见 [CLAUDE.md](CLAUDE.md)。
+更详细的架构、设计决策、踩过的坑见 [CLAUDE.md](CLAUDE.md)。每个版本的发布记录见 [CHANGELOG.md](CHANGELOG.md)。
 
 ## License
 

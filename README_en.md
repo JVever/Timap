@@ -114,7 +114,7 @@ First launch shows the welcome screen: a logo assembly animation plus three valu
 <p align="center">
   <img src="docs/screenshots/06-onboarding-welcome.png" width="240" alt="Welcome screen with assembled logo" />
   <img src="docs/screenshots/07-onboarding-citypick.png" width="240" alt="City picker: 5 popular-city chips and the full searchable list" />
-  <img src="docs/screenshots/08-onboarding-citypick-selected.png" width="240" alt="Beijing selected — green preview card and active CTA appear at the bottom" />
+  <img src="docs/screenshots/08-onboarding-citypick-selected.png" width="240" alt="Beijing selected — green preview card and active 'Get started' button appear at the bottom" />
 </p>
 
 <p align="center"><sub>Welcome → pick your city → confirm</sub></p>
@@ -186,7 +186,7 @@ make reset     # Wipe persisted state — back to first-launch (essential when i
 
 A Command-Line-Tools-only macOS install (no full Xcode) doesn't ship XCTest, so `swift test` won't run. Instead, the `TimapVerify` executable target uses a plain `check(condition, "name")` pattern to cover every branch in `TimapCore`. **When you change logic in `TimapCore`, add a corresponding check in `TimapVerify/main.swift`** — that's the repo's only regression net.
 
-For deeper architecture notes, design decisions, and gotchas, see [CLAUDE.md](CLAUDE.md).
+For deeper architecture notes, design decisions, and gotchas, see [CLAUDE.md](CLAUDE.md). Per-version release notes live in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
