@@ -4,7 +4,7 @@ English · [中文](README.md)
 
 ![Platform](https://img.shields.io/badge/macOS-13.0%2B-blue) ![Swift](https://img.shields.io/badge/Swift-5.9%2B-orange) ![License](https://img.shields.io/badge/license-GPL--3.0-green) ![Release](https://img.shields.io/github/v/release/JVever/Timap?label=release)
 
-> **See your whole team's clock at a glance.**
+> **See every teammate's clock at a glance.**
 > One click in the menu bar shows you who's asleep, who's at lunch, who's at their desk — laid out on a live world map. Drag the time slider, and the green meeting window for next Tuesday lights up by itself.
 
 <p align="center">
