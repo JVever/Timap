@@ -8,7 +8,7 @@ English · [中文](README.md)
 > One click in the menu bar shows you who's asleep, who's at lunch, who's at their desk — laid out on a live world map. Drag the time slider, and the green meeting window for next Tuesday lights up by itself.
 
 <p align="center">
-  <img src="docs/screenshots/01-hero.png" width="520" alt="Timap main view: Beijing as the home city, teammates in Berlin and New York in different states, a 4-hour all-team overlap window highlighted on the time slider" />
+  <img src="docs/screenshots/01-hero.png" width="520" alt="Timap main view: Beijing as the home city, teammates in Berlin and New York in different states, a 4-hour 'everyone-can-meet' window highlighted on the time slider" />
 </p>
 
 ## What it does
@@ -91,7 +91,7 @@ Follow the welcome screen's prompts to pick your city as your home time zone.
 
 <p align="center">
   <img src="docs/screenshots/06-onboarding-welcome.png" width="240" alt="Welcome screen with assembled logo" />
-  <img src="docs/screenshots/07-onboarding-citypick.png" width="240" alt="City picker: 5 popular-city chips and the full searchable list" />
+  <img src="docs/screenshots/07-onboarding-citypick.png" width="240" alt="City picker: 5 popular-city quick picks and the full searchable list" />
   <img src="docs/screenshots/08-onboarding-citypick-selected.png" width="240" alt="Beijing selected — green preview card and active 'Get started' button appear at the bottom" />
 </p>
 
@@ -99,10 +99,10 @@ Follow the welcome screen's prompts to pick your city as your home time zone.
 
 ### 2. Add teammates
 
-Open Settings (gear icon) → click "+ Teammate" on each city card to add team members; "+ Add city" at the bottom for new cities. Each teammate's working hours can be set independently (30-min steps), avatars support image upload or auto-generated initials. Cities not in the catalog can be added manually with lat/lng.
+Open Settings (gear icon) → click "+ Teammate" on each city card to add team members; "+ Add city" at the bottom for new cities. Each teammate's working hours can be adjusted independently.
 
 <p align="center">
-  <img src="docs/screenshots/04-settings.png" width="420" alt="Settings page: one card per city, adjustable working hours, teammate chips with avatar and name" />
+  <img src="docs/screenshots/04-settings.png" width="420" alt="Settings page: one card per city, adjustable working hours, teammate tags with avatar and name" />
 </p>
 
 ### 3. Use it
@@ -110,8 +110,8 @@ Open Settings (gear icon) → click "+ Teammate" on each city card to add team m
 Back on the main view, the moves worth knowing:
 
 - **Drag the slider** — every city card updates to that moment in sync
-- **Click the time number top-left** — jumps to the next window when everyone's in working hours
-- **Click a city's name** — hides / includes that city (hidden cities still show on the map but don't count toward overlap)
+- **Click the time number top-left** — jumps to the next slot when everyone can meet
+- **Click a city's name** — hides / includes that city (hidden cities still show on the map but don't count toward the shared-meeting calculation)
 - **Click "Now"** — snaps back to live time
 
 ## License

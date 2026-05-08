@@ -5,10 +5,10 @@
 ![Platform](https://img.shields.io/badge/macOS-13.0%2B-blue) ![Swift](https://img.shields.io/badge/Swift-5.9%2B-orange) ![License](https://img.shields.io/badge/license-GPL--3.0-green) ![Release](https://img.shields.io/github/v/release/JVever/Timap?label=release)
 
 > **一秒看见每位同事此刻几点。**
-> 菜单栏点一下，世界地图上你的同事正在睡觉、吃午饭还是开会，一目了然。拖一下时间轴，下周二的全员会该约几点，绿色高亮自己跳出来。
+> 菜单栏点一下，世界地图上你的同事正在睡觉、吃午饭还是开会，一目了然。拖一下时间轴，下周二大家一起开会该约几点，绿色高亮自己跳出来。
 
 <p align="center">
-  <img src="docs/screenshots/01-hero.png" width="520" alt="Timap 主界面：北京为家城市，柏林和纽约的同事各自不同状态，时间滑块上 4 小时的全员重叠窗口绿色高亮" />
+  <img src="docs/screenshots/01-hero.png" width="520" alt="Timap 主界面：北京为家城市，柏林和纽约的同事各自不同状态，时间滑块上 4 小时的「大家都能开会」时段绿色高亮" />
 </p>
 
 ## 能干什么
@@ -91,7 +91,7 @@ make run
 
 <p align="center">
   <img src="docs/screenshots/06-onboarding-welcome.png" width="240" alt="欢迎页 · logo 装配完成" />
-  <img src="docs/screenshots/07-onboarding-citypick.png" width="240" alt="城市选择 · 5 个常用城市芯片 + 完整城市列表" />
+  <img src="docs/screenshots/07-onboarding-citypick.png" width="240" alt="城市选择 · 5 个常用城市快捷选项 + 完整城市列表" />
   <img src="docs/screenshots/08-onboarding-citypick-selected.png" width="240" alt="选中北京后底部出现绿色预览卡 + 激活的「开始使用」按钮" />
 </p>
 
@@ -99,7 +99,7 @@ make run
 
 ### 2. 添加同事
 
-进入 Settings（齿轮图标）→ 在每张城市卡上点 "+ 同事" 加入团队成员；底部 "+ 添加新城市" 加更多城市。每位同事的工作时段可独立设置（30 分钟步进），头像支持上传图片或姓名首字母自动生成。内置城市库里没有的城市可以手动添加经纬度。
+进入 Settings（齿轮图标）→ 在每张城市卡上点 "+ 同事" 加入团队成员；底部 "+ 添加新城市" 加更多城市。每位同事的工作时段可独立调整。
 
 <p align="center">
   <img src="docs/screenshots/04-settings.png" width="420" alt="设置页：每个城市一张卡，工作时段可调，同事标签支持头像和名字" />
@@ -110,9 +110,9 @@ make run
 回到主界面，几个常用动作：
 
 - **拖滑块** — 所有城市卡同步切到那一刻的状态
-- **点左上角时间数字** — 一键跳到下一个全员都在工作时段的推荐窗口
-- **点城市名字** — 隐藏 / 包含该城市（隐藏的城市仍显示在地图上，但不参与重叠窗口计算）
-- **点「现在」按钮** — 回到当前实时
+- **点左上角时间数字** — 一键跳到下一个大家都能开会的推荐时段
+- **点城市名字** — 隐藏 / 包含该城市（隐藏的城市仍显示在地图上，但不参与共同时段计算）
+- **点「现在」按钮** — 回到当前时间
 
 ## License
 
