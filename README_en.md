@@ -23,38 +23,68 @@ For people who do three timezone math problems before opening Slack each morning
 - **🌐 Bilingual UI + IANA timezones** — Switch UI language with one click. Time zones aren't hardcoded UTC offsets — Berlin / London / New York DST jumps follow real calendar dates.
 - **🏠 Quiet menu-bar resident** — No Dock icon, no space stolen. Click to open the popover, Esc to close, click anywhere outside to dismiss.
 
-## What it deliberately doesn't do
-
-To avoid scope creep:
-
-- ❌ Calendar / EventKit integration (only timezones, not your schedule)
-- ❌ Multi-day view (today only — next week is next week's problem)
-- ❌ Team cloud sync (each person runs their own local copy, no networking)
-- ❌ App Store distribution (ships via GitHub Releases)
-
 ## Install
 
 ### Option 1: Download the DMG (recommended)
 
 1. Download `Timap-0.1.0.dmg` from [Releases](https://github.com/JVever/Timap/releases)
 2. Open the DMG → drag `Timap.app` to Applications
-3. First launch: right-click `Timap.app` → "Open" → confirm
-4. Look for the Timap icon at the top of your menu bar; click to open
+3. First launch: see "Bypassing Gatekeeper" below. Once it opens, the Timap icon appears at the top of your menu bar.
+
+#### Bypassing Gatekeeper (read this on first launch)
+
+> Timap isn't signed with a $99 Apple Developer ID, so Gatekeeper blocks unsigned apps by default — this is macOS behavior, not a Timap bug. Plenty of well-known macOS utilities (Rectangle, IINA, AltTab, etc.) all required this same dance in their early days. **You only have to do it once; double-clicking works normally afterwards.**
+
+Pick **any one** of the three methods below, depending on your macOS version and preference:
 
 <details>
-<summary>Hit "unidentified developer" warning?</summary>
+<summary><b>Method A: Right-click Open (simplest, recommended first)</b></summary>
 
-This app isn't signed with a $99 Apple Developer ID, so macOS Gatekeeper blocks it once. Plenty of macOS utilities walked the same path — right-click "Open" once and you're done.
+Works on: macOS 13 (Ventura) and earlier; sometimes still works on macOS 14 (Sonoma).
 
-If you'd rather skip the right-click dance, this one-liner is equivalent:
+1. Open Finder → `/Applications` and locate `Timap.app`
+2. **Hold `Control` and click** (or right-click) `Timap.app`
+3. Choose **"Open"** from the context menu — *not* a normal double-click
+4. The warning dialog now shows an **"Open"** button — click it
+5. Future double-clicks work normally
+
+> Note: only the right-click "Open" path shows the "Open" button. A regular double-click shows a dialog with just "Cancel" and "Move to Trash".
+
+</details>
+
+<details>
+<summary><b>Method B: System Settings → Open Anyway (recommended for macOS 14 / 15)</b></summary>
+
+Works on: macOS 14 (Sonoma) and later. Apple tightened Gatekeeper in newer versions, and Method A's "Open" button often doesn't show up — Method B is the official replacement.
+
+1. Double-click `Timap.app` and let it get blocked (you'll see "cannot be opened because it is from an unidentified developer" — click "Done" or "Cancel")
+2. Open **System Settings** → **Privacy & Security**
+3. Scroll to the **"Security"** section near the bottom; you'll see:
+   > "Timap" was blocked from use because it is not from an identified developer.
+4. Click the **"Open Anyway"** button on the right
+5. Confirm one more time when prompted (you may need to enter your Mac password or use Touch ID)
+6. Future double-clicks work normally
+
+</details>
+
+<details>
+<summary><b>Method C: Terminal command (one-liner, for developers)</b></summary>
+
+Works on: all macOS versions. Strips the quarantine attribute so the system treats Timap as a "local" app and never blocks it.
+
+Open **Terminal.app** and run:
 
 ```sh
 xattr -d com.apple.quarantine /Applications/Timap.app
 ```
 
-After that, double-click works normally.
+If you see `No such xattr` — the attribute is already gone; just double-click Timap.
+
+> What this command does: removes the `com.apple.quarantine` extended attribute that macOS adds to anything downloaded from the internet. Without that attribute, Gatekeeper no longer flags the app. **The change only affects this local copy** — it doesn't weaken your Mac's security posture.
 
 </details>
+
+> **All three methods failed?** The download may have been corrupted, or your macOS version introduced a new restriction. Please open an [Issue](https://github.com/JVever/Timap/issues) with your macOS version and the exact error message — I'll follow up.
 
 ### Option 2: Build from source
 

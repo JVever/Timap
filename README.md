@@ -23,38 +23,68 @@
 - **🌐 中英双语 + IANA 时区** — UI 双语切换，时区不是写死的 UTC+8 —— 柏林、伦敦、纽约的夏令时跳转跟着真实日期自动走。
 - **🏠 安静住在菜单栏** — 没有 Dock 图标，不抢空间。需要时点开 popover，Esc 收起，点外面任何地方也收。
 
-## 它**不**做什么
-
-故意不做的事，避免功能蔓延：
-
-- ❌ 日历 / EventKit 集成（只看时区，不读你的日程）
-- ❌ 多日视图（只看"今天"，下周的事下周再说）
-- ❌ 团队云同步（你和同事各自一份本地数据，互不通讯）
-- ❌ App Store 上架（直接 GitHub Releases 分发）
-
 ## 安装
 
 ### 方式一：下载 DMG（推荐）
 
 1. 从 [Releases](https://github.com/JVever/Timap/releases) 下载 `Timap-0.1.0.dmg`
 2. 打开 DMG → 把 `Timap.app` 拖到 Applications
-3. 第一次打开：右键 `Timap.app` → "打开" → 确认
-4. 菜单栏顶部找到 Timap 图标，点开
+3. 第一次打开：见下方"绕过 Gatekeeper"。打开成功后，菜单栏顶部会出现 Timap 图标，点开即可使用。
+
+#### 绕过 Gatekeeper（首次打开必看）
+
+> Timap 没花 99 美元做苹果开发者签名，所以 macOS Gatekeeper 默认会拦下未签名的 app —— 这是系统行为，不是 Timap 的 bug。许多 macOS 老牌工具（Rectangle、IINA、AltTab 等）的早期版本都需要走同样的流程。**只需绕一次，之后双击就能正常打开。**
+
+下面三种方法**任选一种**就行，按你的 macOS 版本和喜好挑：
 
 <details>
-<summary>遇到「无法验证开发者」？</summary>
+<summary><b>方法 A：右键打开（推荐 · 最简单）</b></summary>
 
-这个 app 没花 99 美元做苹果开发者签名，所以 macOS Gatekeeper 默认会拦一次。许多 macOS 工具最初也都走过这条路 —— 右键打开一次就好。
+适用于：macOS 13 (Ventura) 及更早版本，部分情况下 macOS 14 (Sonoma) 也能用。
 
-如果懒得点鼠标，等价于一行命令：
+1. 在 Finder 里打开 `/Applications` 文件夹，找到 `Timap.app`
+2. **按住 `Control` 键并点击**（或右键点击）`Timap.app`
+3. 在弹出菜单里选择 **"打开"**（不是双击！）
+4. 弹出的警告对话框上有一个 **"打开"** 按钮 —— 点它
+5. 之后就能正常双击启动了
+
+> 注意：必须是右键菜单里的"打开"才有"打开"按钮；直接双击 app 弹出的对话框只有"取消"和"移到废纸篓"。
+
+</details>
+
+<details>
+<summary><b>方法 B：系统设置里"仍要打开"（macOS 14 / 15 推荐）</b></summary>
+
+适用于：macOS 14 (Sonoma) 及以上 —— 苹果在新系统里加强了 Gatekeeper，方法 A 有时不显示"打开"按钮，这时用方法 B。
+
+1. 双击 `Timap.app` 让它被系统拦一次（弹出"无法验证开发者"对话框 → 点"完成"或"取消"）
+2. 打开 **系统设置（System Settings）** → **隐私与安全性（Privacy & Security）**
+3. 滚到页面**底部**的"安全性"区域，会看到一行：
+   > "Timap"已被阻止使用，因为它来自身份不明的开发者。
+4. 点击右侧的 **"仍要打开"（Open Anyway）** 按钮
+5. 系统会再弹一次确认对话框 —— 点 **"打开"**（可能要求输入你的 Mac 密码或 Touch ID 验证）
+6. 之后就能正常双击启动了
+
+</details>
+
+<details>
+<summary><b>方法 C：终端命令（一键解除 · 适合开发者）</b></summary>
+
+适用于：所有 macOS 版本。一行命令把 app 上的隔离标记直接去掉，之后系统就当它是"本地 app"，不再拦。
+
+打开 **终端（Terminal.app）**，粘贴并执行：
 
 ```sh
 xattr -d com.apple.quarantine /Applications/Timap.app
 ```
 
-之后正常双击即可。
+如果提示 `No such xattr` —— 说明已经没有隔离标记了，直接双击 Timap 就好。
+
+> 这条命令做的事：删除 macOS 给"从互联网下载"的文件加的 `com.apple.quarantine` 扩展属性。删掉之后 Gatekeeper 不再认为它是不可信来源。**只对你已经下载到本地的这一份 app 生效**，安全性不会受影响。
 
 </details>
+
+> **三种方法都失败了？** 多半是 DMG 下载过程被截断或 macOS 版本特别新引入了新限制。可以在 [Issues](https://github.com/JVever/Timap/issues) 留言告诉我你的 macOS 版本和具体报错，我会跟进。
 
 ### 方式二：从源码构建
 
