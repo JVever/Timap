@@ -123,12 +123,12 @@ Open Settings (gear icon) → click "+ Teammate" on each city card to add team m
 
 ### 3. Use it
 
-Back on the main view, these are the moves worth knowing:
+Back on the main view, the moves worth knowing:
 
-- **Curious who'll be online at some future time?** Drag the time slider at the top — every city card switches to that moment in sync.
-- **Not sure when to schedule the next meeting?** Click the big time number at the top-left to jump to the next window when everyone's in working hours.
-- **Want to focus on just a few cities for now?** Click a city's name to hide it (it stays on the map but stops counting toward the overlap window).
-- **Scrubbed away from now?** Click "Now" to snap back to the live moment.
+- **Drag the slider** — every city card updates to that moment in sync
+- **Click the time number top-left** — jumps to the next window when everyone's in working hours
+- **Click a city's name** — hides / includes that city (hidden cities still show on the map but don't count toward overlap)
+- **Click "Now"** — snaps back to live time
 
 ## License
 
