@@ -1,5 +1,5 @@
 APP_NAME := Timap
-VERSION  := 0.1.4
+VERSION  := 0.1.5
 APP_DIR  := dist/$(APP_NAME).app
 DMG_PATH := dist/$(APP_NAME)-$(VERSION).dmg
 DMG_STAGE:= dist/dmg-staging
@@ -39,7 +39,11 @@ bundle: build $(ICON)
 '    <key>CFBundleDisplayName</key><string>Timap</string>' \
 '    <key>CFBundleIdentifier</key><string>com.timap.app</string>' \
 '    <key>CFBundleVersion</key><string>1</string>' \
-'    <key>CFBundleShortVersionString</key><string>0.1.4</string>' \
+'    <key>CFBundleShortVersionString</key><string>0.1.5</string>' \
+'    <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>' \
+'    <key>CFBundleDevelopmentRegion</key><string>en</string>' \
+'    <key>LSApplicationCategoryType</key><string>public.app-category.utilities</string>' \
+'    <key>NSHumanReadableCopyright</key><string>Copyright © 2026 JVever. Released under GPL-3.0.</string>' \
 '    <key>CFBundleExecutable</key><string>Timap</string>' \
 '    <key>CFBundlePackageType</key><string>APPL</string>' \
 '    <key>CFBundleIconFile</key><string>Timap</string>' \

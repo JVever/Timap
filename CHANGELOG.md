@@ -4,6 +4,22 @@ All notable changes to Timap are tracked here. Format: [Keep a Changelog](https:
 
 ## [Unreleased]
 
+## [0.1.5] — 2026-05-09
+
+### Fixed
+
+- **Timap 不出现在 Launchpad 里**（Spotlight 能搜到、菜单栏图标也正常，
+  但启动台空空）。我之前给的解释"`LSUIElement=YES` 的 app 都不在
+  Launchpad"是错的——Hidden Bar 等同类菜单栏 app 都设了
+  `LSUIElement=YES` 却照样出现在启动台。对照 Hidden Bar 的
+  `Info.plist` 后定位到真正缺失的元数据：`LSApplicationCategoryType`
+  + `CFBundleInfoDictionaryVersion` + `CFBundleDevelopmentRegion`
+  + `NSHumanReadableCopyright`。Apple 对"什么算合法 app"的判定
+  不光看可执行文件，还看这些标准 Info.plist 字段——缺了几个
+  Launchpad 就把它当成残缺 app 默默跳过。Makefile 的 `Info.plist`
+  生成模板已补齐。Spotlight `mdls` 验证现在能正确给 Timap 打上
+  "实用工具"分类。
+
 ## [0.1.4] — 2026-05-09
 
 ### Fixed
@@ -128,7 +144,8 @@ Initial public release.
 - Headless screenshot tool (`TimapShot` + `make screenshot`) for capturing the popover via distributed notifications.
 - Brand identity: SVG logo source, programmatically-drawn menu-bar template icon, regenerable `.icns` via `make icon`.
 
-[Unreleased]: https://github.com/JVever/Timap/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/JVever/Timap/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/JVever/Timap/releases/tag/v0.1.5
 [0.1.4]: https://github.com/JVever/Timap/releases/tag/v0.1.4
 [0.1.3]: https://github.com/JVever/Timap/releases/tag/v0.1.3
 [0.1.2]: https://github.com/JVever/Timap/releases/tag/v0.1.2
