@@ -16,8 +16,6 @@ English · [中文](README.md)
 - **🌍 Whole team on one live map** — A world map with day/night that follows the sun. The moment you open the app, you can tell who's deep in the night, who's at lunch, who just sat down at their desk.
 - **🎚 Time slider, scrubbable** — Push the slider; every city card switches state in sync. "Will Maya in NYC still be awake at 10 PM Beijing next Tuesday?" Drag there. Answer's on the card.
 - **✨ Auto-find shared work windows** — Computes the intersection of every teammate's working hours at 30-min granularity, ranks windows by team-overlap × duration. Click the time number top-left to jump to the next recommended slot.
-- **🌐 Bilingual UI + IANA timezones** — Switch UI language with one click. Time zones aren't hardcoded UTC offsets — Berlin / London / New York DST jumps follow real calendar dates.
-- **🏠 Quiet menu-bar resident** — No Dock icon, no space stolen. Click to open the popover, Esc to close, click anywhere outside to dismiss.
 
 ## Install
 
@@ -123,16 +121,14 @@ Open Settings (gear icon) → click "+ Teammate" on each city card to add team m
   <img src="docs/screenshots/04-settings.png" width="420" alt="Settings page: one card per city, adjustable working hours, teammate chips with avatar and name" />
 </p>
 
-### 3. Read the map
+### 3. Use it
 
-Back on the main view:
+Back on the main view, these are the moves worth knowing:
 
-| Action | Result |
-|---|---|
-| Drag the slider | Every city card updates in sync |
-| Click the time number top-left | Jump to the next recommended meeting window |
-| Click a city name | Hide / include that city (hidden cities don't count toward overlap, but still show on the map) |
-| Click "Now" | Snap back to live time |
+- **Curious who'll be online at some future time?** Drag the time slider at the top — every city card switches to that moment in sync.
+- **Not sure when to schedule the next meeting?** Click the big time number at the top-left to jump to the next window when everyone's in working hours.
+- **Want to focus on just a few cities for now?** Click a city's name to hide it (it stays on the map but stops counting toward the overlap window).
+- **Scrubbed away from now?** Click "Now" to snap back to the live moment.
 
 ## License
 
