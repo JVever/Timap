@@ -13,18 +13,18 @@ English · [中文](README.md)
 
 ## What it does
 
-- **🌍 Whole team on one live map** — A world map with day/night that follows the sun. The moment you open the app, you can tell who's deep in the night, who's at lunch, who just sat down at their desk.
+- **🌍 Every teammate's city, plotted on a live map** — A world map with each teammate's city pinned, plus a day/night terminator that moves in real time. The moment you open the app, you can tell who's deep in the night, who's at lunch, who just sat down at their desk.
 - **🎚 Time slider, scrubbable** — Push the slider; every city card switches state in sync. "Will Maya in NYC still be awake at 10 PM Beijing next Tuesday?" Drag there. Answer's on the card.
-- **✨ Auto-find shared work windows** — Computes the intersection of every teammate's working hours at 30-min granularity, ranks windows by team-overlap × duration. Click the time number top-left to jump to the next recommended slot.
+- **✨ Auto-find times when everyone can meet** — Intersects every teammate's working hours at 30-min granularity, ranks the resulting windows by team-overlap × duration. Click the time number top-left to jump to the next recommended slot.
 
 ## Install
 
 ### Option 1: Download the DMG (recommended)
 
-1. Download `Timap-0.1.0.dmg` from [Releases](https://github.com/JVever/Timap/releases)
-2. Open the DMG → drag `Timap.app` to Applications
+1. Open the [Releases page](https://github.com/JVever/Timap/releases) → under the latest version's **Assets** section, click `Timap-0.1.1.dmg` to download
+2. Open the downloaded DMG → drag `Timap.app` to your Applications folder
 3. Double-click Timap (**a "can't be opened" dialog will pop up the first time** — see how to handle it below)
-4. Once it opens, the Timap icon appears at the top of your menu bar
+4. After unblocking, double-click again and **the welcome screen pops up automatically**; just follow the prompts. After that, Timap lives in the **top-right menu bar** (icon: a black-framed three-bar mark) — click it any time to use the app
 
 #### A "can't be opened" dialog appears the first time — here's how to handle it
 
@@ -36,27 +36,10 @@ The first time you double-click Timap, macOS will block it and show a dialog lik
 
 This is macOS's built-in safety check for any app not installed from the App Store — **it's not a problem with Timap**. **You only need to handle this once**; double-clicking after that just works.
 
-Pick **any one** of the three methods below:
+Pick either method below:
 
 <details>
-<summary><b>Method A: Right-click Open — simplest, try this first</b></summary>
-
-Works on most macOS 13 / 14 systems.
-
-1. Open Finder → `/Applications` and locate `Timap.app`
-2. **Hold `Control` and click** (or two-finger click on a trackpad) `Timap.app`
-3. Choose **"Open"** from the context menu
-4. This time the warning dialog has an **"Open"** button — click it
-5. Future double-clicks just work
-
-> Note: only the right-click "Open" path produces a clickable "Open" button. A normal double-click shows a dialog with only "Cancel" and "Move to Trash".
-
-</details>
-
-<details>
-<summary><b>Method B: Click "Open Anyway" in System Settings — use this if Method A doesn't work</b></summary>
-
-For macOS 14 (Sonoma) and 15 (Sequoia). On these versions Method A often hides the "Open" button — you'll need to allow Timap from System Settings instead.
+<summary><b>Method 1: Click "Open Anyway" in System Settings — recommended</b></summary>
 
 1. Double-click `Timap.app` to trigger the block dialog, then click "Done" or "Cancel" to dismiss it
 2. Open **System Settings** → on the left, choose **Privacy & Security**
@@ -69,9 +52,7 @@ For macOS 14 (Sonoma) and 15 (Sequoia). On these versions Method A often hides t
 </details>
 
 <details>
-<summary><b>Method C: One-line Terminal command — for command-line folks</b></summary>
-
-Works on all macOS versions.
+<summary><b>Method 2: One-line Terminal command — for command-line folks</b></summary>
 
 Open **Terminal.app**, paste and press Enter:
 
@@ -87,7 +68,16 @@ If you see `No such xattr` or `No such file or directory` — Timap already does
 
 </details>
 
-> **None of the three methods worked?** Likely a corrupted DMG download or a new restriction in your macOS version. Please open an [Issue](https://github.com/JVever/Timap/issues) with your macOS version and the exact error text — I'll follow up.
+> **Neither method worked?** Likely a corrupted DMG download or a new restriction in your macOS version. Please open an [Issue](https://github.com/JVever/Timap/issues) with your macOS version and the exact error text — I'll follow up.
+
+#### Menu-bar icon hidden behind the notch?
+
+On notched MacBooks (Pro 14"/16" or Air 13"/15"), if your menu bar is crowded, Timap's icon may be hidden behind the notch and unclickable. Two ways out:
+
+- **Open Timap without the menu-bar icon** — just **double-click `/Applications/Timap.app`** (or launch from Spotlight / Launchpad). The main view pops up directly.
+- **Fix it permanently with a menu-bar manager.** Free, open-source picks:
+  - [Hidden Bar](https://github.com/dwarvesf/hidden) — minimal, just shows/hides
+  - [Ice](https://github.com/jordanbaird/Ice) — fuller-featured
 
 ### Option 2: Build from source
 

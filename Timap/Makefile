@@ -1,5 +1,5 @@
 APP_NAME := Timap
-VERSION  := 0.1.0
+VERSION  := 0.1.1
 APP_DIR  := dist/$(APP_NAME).app
 DMG_PATH := dist/$(APP_NAME)-$(VERSION).dmg
 DMG_STAGE:= dist/dmg-staging
@@ -31,7 +31,7 @@ bundle: build $(ICON)
 '    <key>CFBundleDisplayName</key><string>Timap</string>' \
 '    <key>CFBundleIdentifier</key><string>com.timap.app</string>' \
 '    <key>CFBundleVersion</key><string>1</string>' \
-'    <key>CFBundleShortVersionString</key><string>0.1.0</string>' \
+'    <key>CFBundleShortVersionString</key><string>0.1.1</string>' \
 '    <key>CFBundleExecutable</key><string>Timap</string>' \
 '    <key>CFBundlePackageType</key><string>APPL</string>' \
 '    <key>CFBundleIconFile</key><string>Timap</string>' \

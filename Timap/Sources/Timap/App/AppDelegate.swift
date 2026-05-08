@@ -28,6 +28,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Task { @MainActor in self.setUp() }
     }
 
+    /// Called by AppKit whenever the user re-launches an already-running
+    /// instance — e.g., double-clicks `/Applications/Timap.app` while
+    /// the menu-bar process is alive. For an `LSUIElement` app there's
+    /// no Dock icon and no window to re-focus, so by default the system
+    /// does nothing visible: looks broken. Pop the popover instead, so
+    /// the user gets immediate feedback that the app is alive.
+    nonisolated func applicationShouldHandleReopen(
+        _ sender: NSApplication, hasVisibleWindows flag: Bool
+    ) -> Bool {
+        Task { @MainActor in self.openPopoverIfNeeded() }
+        return false
+    }
+
     private func setUp() {
         // Status item — Timap brand mark (framed three-bar icon) in the
         // menu bar. The image is drawn programmatically as a template so
@@ -65,6 +78,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         ) { [weak self] notification in
             Task { @MainActor in self?.handleScreenshotRequest(notification) }
         }
+
+        // First-launch nudge: on a fresh install the user has no Dock
+        // icon and no obvious sign that double-clicking Timap.app did
+        // anything. The menu-bar icon is easy to miss on a crowded
+        // bar. Auto-open the onboarding popover so they see the
+        // welcome screen immediately. Once they've onboarded, this
+        // condition stays false and subsequent launches don't pop
+        // unsolicited.
+        //
+        // 300ms delay: the status-bar layout pipeline isn't done by
+        // the time we return from `setUp()`. If we call `popover.show`
+        // immediately the button's window-relative bounds can still be
+        // zero, causing the show to silently no-op or position the
+        // popover off-screen. Waiting one frame is unreliable; ~300ms
+        // is what NSStatusItem needs to settle in practice.
+        if !state.hasOnboarded {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.openPopoverIfNeeded()
+            }
+        }
+    }
+
+    private func openPopoverIfNeeded() {
+        guard !popover.isShown, let button = statusItem?.button else { return }
+        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+        startOutsideClickMonitor()
     }
 
     @objc private func togglePopover(_ sender: Any?) {

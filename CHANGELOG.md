@@ -4,6 +4,32 @@ All notable changes to Timap are tracked here. Format: [Keep a Changelog](https:
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-05-08
+
+### Fixed
+
+- **First-launch UX:** double-clicking `Timap.app` from `/Applications`
+  now auto-opens the popover when the user hasn't completed
+  onboarding, so a brand-new install no longer looks broken (it's
+  an `LSUIElement` app with no Dock icon, and the menu-bar globe
+  was easy to miss on a crowded bar).
+- Re-launching an already-running Timap (double-clicking the app
+  while it's alive) now also pops the popover via
+  `applicationShouldHandleReopen`, instead of doing nothing. This
+  is also the answer for users on notched MacBooks whose menu-bar
+  icon ends up hidden behind the notch — re-launch the app and
+  the popover comes back.
+
+### Changed
+
+- README copy: replaced jargon ("全队 / pin / 全员重叠窗口") with
+  reader-friendlier wording, dropped the brittle right-click-Open
+  install method (it doesn't work on macOS 14 / 15), simplified
+  install down to two methods (System Settings → Open Anyway, or
+  the `xattr` CLI), and added guidance for users whose menu-bar
+  icon gets hidden behind the notch.
+- v0.1.0 release notes rewritten as Chinese-first bilingual.
+
 ## [0.1.0] — 2026-05-07
 
 Initial public release.
@@ -28,5 +54,6 @@ Initial public release.
 - Headless screenshot tool (`TimapShot` + `make screenshot`) for capturing the popover via distributed notifications.
 - Brand identity: SVG logo source, programmatically-drawn menu-bar template icon, regenerable `.icns` via `make icon`.
 
-[Unreleased]: https://github.com/JVever/Timap/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/JVever/Timap/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/JVever/Timap/releases/tag/v0.1.1
 [0.1.0]: https://github.com/JVever/Timap/releases/tag/v0.1.0
