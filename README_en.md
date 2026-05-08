@@ -38,8 +38,7 @@ This is macOS's built-in safety check for any app not installed from the App Sto
 
 Pick either method below:
 
-<details>
-<summary><b>Method 1: Click "Open Anyway" in System Settings — recommended</b></summary>
+##### Method 1: Click "Open Anyway" in System Settings (recommended)
 
 1. Double-click `Timap.app` to trigger the block dialog, then click "Done" or "Cancel" to dismiss it
 2. Open **System Settings** → on the left, choose **Privacy & Security**
@@ -49,10 +48,7 @@ Pick either method below:
 5. Confirm once more when prompted (Mac password or Touch ID may be required)
 6. Future double-clicks just work
 
-</details>
-
-<details>
-<summary><b>Method 2: One-line Terminal command — for command-line folks</b></summary>
+##### Method 2: One-line Terminal command (for command-line folks)
 
 Open **Terminal.app**, paste and press Enter:
 
@@ -65,8 +61,6 @@ After that, double-clicking Timap opens it directly.
 If you see `No such xattr` or `No such file or directory` — Timap already doesn't need this; just double-click it.
 
 > **What this command does:** macOS adds a hidden "downloaded from the internet" tag to any file that came from a browser, which triggers an extra safety check. The command removes that tag from Timap so the system treats it like any other locally-installed app. **It only affects this single copy of Timap.app — your Mac's overall security settings are unchanged.**
-
-</details>
 
 > **Neither method worked?** Likely a corrupted DMG download or a new restriction in your macOS version. Please open an [Issue](https://github.com/JVever/Timap/issues) with your macOS version and the exact error text — I'll follow up.
 

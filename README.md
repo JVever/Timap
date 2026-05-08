@@ -38,8 +38,7 @@
 
 下面两种方法任选一种：
 
-<details>
-<summary><b>方法 1：系统设置里点"仍要打开" — 推荐</b></summary>
+##### 方法 1：系统设置里点"仍要打开"（推荐）
 
 1. 双击 `Timap.app`，让弹出的拦截对话框出现，先点"完成"或"取消"关掉它
 2. 打开 **系统设置（System Settings）** → 左侧选 **隐私与安全性（Privacy & Security）**
@@ -49,10 +48,7 @@
 5. 系统再弹一次确认对话框，点 **"打开"**（可能需要输入 Mac 密码或 Touch ID 验证）
 6. 之后双击就能正常启动了
 
-</details>
-
-<details>
-<summary><b>方法 2：终端一行命令 — 适合熟悉命令行的人</b></summary>
+##### 方法 2：终端一行命令（适合熟悉命令行的人）
 
 打开 **终端（Terminal.app）**，粘贴并回车：
 
@@ -65,8 +61,6 @@ xattr -d com.apple.quarantine /Applications/Timap.app
 如果提示 `No such xattr` 或 `No such file or directory` —— 说明 Timap 已经不需要处理了，直接双击就好。
 
 > **这条命令在做什么？** macOS 会给所有从浏览器下载的文件加一个"来自互联网"的隐藏标记，导致系统多一道安全检查。这条命令把 Timap 身上的这个标记去掉，让系统当它是普通的本地软件。**只对这一份 Timap.app 生效，不会影响你 Mac 整体的安全设置。**
-
-</details>
 
 > **两种都试过还是打不开？** 可能是 DMG 下载中断导致文件损坏，或者你用的 macOS 版本引入了新限制。麻烦在 [Issues](https://github.com/JVever/Timap/issues) 里留个言，告诉我你的 macOS 版本号和看到的具体报错文字，我会跟进修。
 
