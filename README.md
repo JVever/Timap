@@ -138,56 +138,6 @@ make run
 | 点城市名字 | 隐藏 / 包含该城市（隐藏的不参与重叠计算，但仍显示在地图上） |
 | 点 "现在" 按钮 | 回到当前实时 |
 
-## 给贡献者
-
-一人维护，欢迎 PR / issue。
-
-### 仓库结构
-
-```
-.
-├── Timap/                         # macOS app（SPM package，不带 .xcodeproj）
-│   ├── Package.swift
-│   ├── Makefile                   # 所有日常命令
-│   ├── Resources/                 # app 图标
-│   └── Sources/
-│       ├── TimapCore/             # 纯逻辑层（数据 / 时间数学 / 地理 / 持久化）— 无 UI 依赖
-│       ├── Timap/                 # SwiftUI 视图层
-│       └── TimapVerify/           # 断言式测试套件（替代 swift test，下面会解释）
-├── prototype/                     # 设计阶段的 React/Babel HTML 原型，视觉规范源
-├── logo/                          # 品牌 SVG 源稿
-├── docs/screenshots/              # README 用的截图
-└── CLAUDE.md                      # 详细架构 / 约定 / 避坑指南
-```
-
-### 想改东西？看这里
-
-| 想做的事 | 该改 / 该看 |
-|---|---|
-| 加一座城市 | `Timap/Sources/TimapCore/Resources/cities.json` |
-| 加新的 UI / 调整布局 | `Timap/Sources/Timap/Views/` |
-| 调时间 / 时区计算 / 持久化 / 地理 | `Timap/Sources/TimapCore/` + 在 `TimapVerify/main.swift` 加断言 |
-| 加新文案 / i18n | `Timap/Sources/TimapCore/Models/L10n.swift` 同时改 zh + en |
-| 改菜单栏 / Dock 图标 | `Timap/Sources/Timap/Brand/BrandIcon.swift` 或 `Timap/Resources/Timap-AppIcon.svg` |
-| 调 onboarding 流程 | `Timap/Sources/Timap/Views/OnboardingView.swift` |
-
-### 常用命令
-
-```sh
-cd Timap
-make verify    # 跑 TimapCore 断言（替代 swift test 的事实测试套件）
-make run       # 构建 + 启动
-make install   # 拷到 /Applications
-make dmg       # 打 DMG 安装镜像
-make reset     # 清持久化数据，回到首启状态（开发 onboarding 必备）
-```
-
-### 为什么是 `make verify` 不是 `swift test`
-
-macOS 上只装了 Command Line Tools（没装完整 Xcode）的环境不带 XCTest，`swift test` 跑不起来。所以仓库里有一个 `TimapVerify` executable target —— 用最朴素的 `check(condition, "name")` 模式覆盖 `TimapCore` 的逻辑分支。**改 `TimapCore` 里的逻辑请同步在 `TimapVerify/main.swift` 里加断言**，这是仓库唯一的回归测试机制。
-
-更详细的架构、设计决策、踩过的坑见 [CLAUDE.md](CLAUDE.md)。每个版本的发布记录见 [CHANGELOG.md](CHANGELOG.md)。
-
 ## License
 
 [GPL-3.0](LICENSE) · Copyright © 2026 [JVever](https://github.com/JVever)

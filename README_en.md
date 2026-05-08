@@ -138,56 +138,6 @@ Back on the main view:
 | Click a city name | Hide / include that city (hidden cities don't count toward overlap, but still show on the map) |
 | Click "Now" | Snap back to live time |
 
-## For contributors
-
-Solo-maintained. PRs and issues welcome.
-
-### Repo layout
-
-```
-.
-├── Timap/                         # The macOS app (SPM package, no .xcodeproj)
-│   ├── Package.swift
-│   ├── Makefile                   # All daily commands
-│   ├── Resources/                 # App icons
-│   └── Sources/
-│       ├── TimapCore/             # Pure logic (data / time math / geo / persistence) — no UI deps
-│       ├── Timap/                 # SwiftUI view layer
-│       └── TimapVerify/           # Assertion-style test suite (de-facto swift test, see below)
-├── prototype/                     # React/Babel HTML design prototypes (visual spec source)
-├── logo/                          # Brand SVG sources
-├── docs/screenshots/              # Screenshots for this README
-└── CLAUDE.md                      # Detailed architecture / conventions / gotchas
-```
-
-### Where to look when…
-
-| Want to do | Edit / read |
-|---|---|
-| Add a city | `Timap/Sources/TimapCore/Resources/cities.json` |
-| Add new UI / tweak layout | `Timap/Sources/Timap/Views/` |
-| Adjust time math / persistence / geo | `Timap/Sources/TimapCore/` + add a check in `TimapVerify/main.swift` |
-| Add or change copy / i18n | `Timap/Sources/TimapCore/Models/L10n.swift` (update zh and en together) |
-| Change menu-bar / Dock icon | `Timap/Sources/Timap/Brand/BrandIcon.swift` or `Timap/Resources/Timap-AppIcon.svg` |
-| Tweak the onboarding flow | `Timap/Sources/Timap/Views/OnboardingView.swift` |
-
-### Common commands
-
-```sh
-cd Timap
-make verify    # Run TimapCore assertions (the de-facto test suite)
-make run       # Build + launch
-make install   # Copy to /Applications
-make dmg       # Build the DMG installer
-make reset     # Wipe persisted state — back to first-launch (essential when iterating on onboarding)
-```
-
-### Why `make verify` instead of `swift test`
-
-A Command-Line-Tools-only macOS install (no full Xcode) doesn't ship XCTest, so `swift test` won't run. Instead, the `TimapVerify` executable target uses a plain `check(condition, "name")` pattern to cover every branch in `TimapCore`. **When you change logic in `TimapCore`, add a corresponding check in `TimapVerify/main.swift`** — that's the repo's only regression net.
-
-For deeper architecture notes, design decisions, and gotchas, see [CLAUDE.md](CLAUDE.md). Per-version release notes live in [CHANGELOG.md](CHANGELOG.md).
-
 ## License
 
 [GPL-3.0](LICENSE) · Copyright © 2026 [JVever](https://github.com/JVever)
