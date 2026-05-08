@@ -4,6 +4,36 @@ All notable changes to Timap are tracked here. Format: [Keep a Changelog](https:
 
 ## [Unreleased]
 
+## [0.1.4] — 2026-05-09
+
+### Fixed
+
+- **App crashed on first launch / first onboarding click on every
+  user's machine — the actual root cause behind the v0.1.1, v0.1.2
+  and v0.1.3 attempts.** The crash signature in user-side
+  diagnostic reports was always the same: SwiftPM's auto-generated
+  `Bundle.module` accessor calling `fatalError` because it couldn't
+  locate `Timap_TimapCore.bundle`. The accessor looks in
+  `Bundle.main.bundleURL/Timap_TimapCore.bundle`, which for a real
+  `.app` resolves to `Timap.app/Timap_TimapCore.bundle` (top-level
+  of the bundle) — but the Makefile copied the resource bundle
+  into `Contents/MacOS/` instead, so it was never found. The
+  accessor's second fallback is a hard-coded absolute path inside
+  the build dir (`/Users/jvever/Code/.../.build/release/...`),
+  which only existed on the developer's own machine. That's why
+  v0.1.1–0.1.3 ran fine locally but crashed for everyone else.
+  The earlier "popover dismissed on click" theories were all
+  wrong: the popover wasn't dismissing, the entire process was
+  segfaulting after the SwiftUI view recomposed and accessed
+  `CityCatalog.all`, which lazy-initializes via `Bundle.module`.
+  Fix is two-pronged: (1) `CityCatalog` now searches a list of
+  candidate paths (`Contents/Resources/cities.json` first, then
+  next-to-executable, then `Bundle.module` only when the SPM
+  bundle is actually present) so the catalog never triggers the
+  fatal accessor; (2) the Makefile now copies `cities.json`
+  directly into `.app/Contents/Resources/` as the canonical
+  location.
+
 ## [0.1.3] — 2026-05-09
 
 ### Fixed
@@ -98,7 +128,8 @@ Initial public release.
 - Headless screenshot tool (`TimapShot` + `make screenshot`) for capturing the popover via distributed notifications.
 - Brand identity: SVG logo source, programmatically-drawn menu-bar template icon, regenerable `.icns` via `make icon`.
 
-[Unreleased]: https://github.com/JVever/Timap/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/JVever/Timap/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/JVever/Timap/releases/tag/v0.1.4
 [0.1.3]: https://github.com/JVever/Timap/releases/tag/v0.1.3
 [0.1.2]: https://github.com/JVever/Timap/releases/tag/v0.1.2
 [0.1.1]: https://github.com/JVever/Timap/releases/tag/v0.1.1

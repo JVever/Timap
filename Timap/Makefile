@@ -1,10 +1,11 @@
 APP_NAME := Timap
-VERSION  := 0.1.3
+VERSION  := 0.1.4
 APP_DIR  := dist/$(APP_NAME).app
 DMG_PATH := dist/$(APP_NAME)-$(VERSION).dmg
 DMG_STAGE:= dist/dmg-staging
 EXE      := .build/release/$(APP_NAME)
 BUNDLE   := .build/release/Timap_TimapCore.bundle
+CITIES   := Sources/TimapCore/Resources/cities.json
 ICON_SRC := Resources/Timap-AppIcon.svg
 ICON     := Resources/Timap.icns
 
@@ -21,6 +22,13 @@ bundle: build $(ICON)
 	@mkdir -p "$(APP_DIR)/Contents/Resources"
 	@cp "$(EXE)" "$(APP_DIR)/Contents/MacOS/$(APP_NAME)"
 	@cp -R "$(BUNDLE)" "$(APP_DIR)/Contents/MacOS/"
+	# Belt-and-suspenders: also copy cities.json directly into
+	# Contents/Resources/ so CityCatalog can resolve it via Bundle.main —
+	# SPM's auto-generated Bundle.module accessor calls fatalError when
+	# its expected path layout isn't present, which crashed the app on
+	# users' machines through v0.1.3 (the dev fallback hard-coded inside
+	# Bundle.module masked it locally). See CityCatalog.swift.
+	@cp "$(CITIES)" "$(APP_DIR)/Contents/Resources/cities.json"
 	@cp "$(ICON)" "$(APP_DIR)/Contents/Resources/Timap.icns"
 	@printf '%s\n' \
 '<?xml version="1.0" encoding="UTF-8"?>' \
@@ -31,7 +39,7 @@ bundle: build $(ICON)
 '    <key>CFBundleDisplayName</key><string>Timap</string>' \
 '    <key>CFBundleIdentifier</key><string>com.timap.app</string>' \
 '    <key>CFBundleVersion</key><string>1</string>' \
-'    <key>CFBundleShortVersionString</key><string>0.1.3</string>' \
+'    <key>CFBundleShortVersionString</key><string>0.1.4</string>' \
 '    <key>CFBundleExecutable</key><string>Timap</string>' \
 '    <key>CFBundlePackageType</key><string>APPL</string>' \
 '    <key>CFBundleIconFile</key><string>Timap</string>' \

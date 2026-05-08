@@ -75,9 +75,11 @@ The projection is equirectangular but cropped to lat 78°N…-56°S (skipping An
 
 `make bundle` produces `dist/Timap.app` by:
 1. `swift build -c release` → produces `.build/release/Timap` (binary) and `.build/release/Timap_TimapCore.bundle` (SPM resource bundle for `cities.json`).
-2. Wraps both into `Timap.app/Contents/MacOS/` alongside a hand-written `Info.plist` (`LSUIElement=YES`, `LSMinimumSystemVersion=13.0`).
+2. Wraps the binary + the SPM resource bundle into `Timap.app/Contents/MacOS/`, **also** copies `cities.json` directly into `Timap.app/Contents/Resources/`, alongside a hand-written `Info.plist` (`LSUIElement=YES`, `LSMinimumSystemVersion=13.0`).
 
-The resource bundle MUST sit next to the executable, since `Bundle.module` looks at the executable's directory. Don't move it to `Contents/Resources/` — `Bundle.module` won't find it there.
+**Don't trust SwiftPM's auto-generated `Bundle.module` accessor inside an .app bundle.** It looks at `Bundle.main.bundleURL/Timap_TimapCore.bundle` — and inside a `.app`, `Bundle.main.bundleURL` is the `.app` itself, so the bundle would have to sit at `.app/` top-level (a non-canonical, weird location). The accessor's only fallback is a hard-coded absolute path inside the developer's `.build/` dir, which doesn't exist on user machines and triggers `fatalError` on first access. v0.1.0–v0.1.3 all crashed on every user's machine because of this; the dev fallback masked it locally.
+
+Fix shipped in v0.1.4: `CityCatalog` searches a list of candidate paths (`Bundle.main.url(forResource:)` for `Contents/Resources/cities.json` first, then next-to-executable, then `Bundle.module` — only when the SPM bundle is detectably present). The Makefile copies `cities.json` into `Contents/Resources/` to feed the primary path. Keep that copy in sync if `cities.json` ever moves; don't delete it on the assumption that the SPM bundle suffices.
 
 ## Working with the prototype
 

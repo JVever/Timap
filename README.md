@@ -21,7 +21,7 @@
 
 ### 方式一：下载 DMG（推荐）
 
-1. 进入 [Releases 页面](https://github.com/JVever/Timap/releases) → 在最新版本下方的 **Assets**（资源）区域里找到并点击 `Timap-0.1.3.dmg` 下载
+1. 进入 [Releases 页面](https://github.com/JVever/Timap/releases) → 在最新版本下方的 **Assets**（资源）区域里找到并点击 `Timap-0.1.4.dmg` 下载
 2. 打开下载好的 DMG → 把 `Timap.app` 拖到 Applications 文件夹
 3. 双击 Timap 打开（**第一次会弹"无法打开"对话框**，看下方处理方法）
 4. 处理后再次双击，**欢迎页会自动弹出**；按提示完成首次设置即可。之后 Timap 常驻屏幕**右上角的菜单栏**（图标是黑色框 + 三条横杠样式），点击图标随时打开使用
