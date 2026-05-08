@@ -15,7 +15,7 @@ English · [中文](README.md)
 
 - **🌍 Every teammate's city, plotted on a live map** — A world map with each teammate's city pinned, plus a day/night terminator that moves in real time. The moment you open the app, you can tell who's deep in the night, who's at lunch, who just sat down at their desk.
 - **🎚 Time slider, scrubbable** — Push the slider; every city card switches state in sync. "Will Maya in NYC still be awake at 10 PM Beijing next Tuesday?" Drag there. Answer's on the card.
-- **✨ Auto-find times when everyone can meet** — Intersects every teammate's working hours at 30-min granularity, ranks the resulting windows by team-overlap × duration. Click the time number top-left to jump to the next recommended slot.
+- **✨ Auto-find times when everyone can meet** — Intersects each city's working hours at 30-min granularity, ranks the resulting windows by team-overlap × duration. Click the time number top-left to jump to the next recommended slot.
 
 ## Install
 
@@ -99,7 +99,7 @@ Follow the welcome screen's prompts to pick your city as your home time zone.
 
 ### 2. Add teammates
 
-Open Settings (gear icon) → click "+ Teammate" on each city card to add team members; "+ Add city" at the bottom for new cities. Each teammate's working hours can be adjusted independently.
+Open Settings (gear icon) → click "+ Teammate" on each city card to add team members; "+ Add city" at the bottom for new cities. Working hours are set **per city** (everyone in the same city shares one schedule), which keeps adjustments quick.
 
 <p align="center">
   <img src="docs/screenshots/04-settings.png" width="420" alt="Settings page: one card per city, adjustable working hours, teammate tags with avatar and name" />
