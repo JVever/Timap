@@ -29,62 +29,71 @@
 
 1. 从 [Releases](https://github.com/JVever/Timap/releases) 下载 `Timap-0.1.0.dmg`
 2. 打开 DMG → 把 `Timap.app` 拖到 Applications
-3. 第一次打开：见下方"绕过 Gatekeeper"。打开成功后，菜单栏顶部会出现 Timap 图标，点开即可使用。
+3. 双击 Timap 打开（**第一次打开会弹一个"无法打开"对话框**，看下方处理方法）
+4. 打开成功后，菜单栏顶部会出现 Timap 图标，点开即可使用
 
-#### 绕过 Gatekeeper（首次打开必看）
+#### 第一次打开会弹"无法打开"对话框 — 这样处理
 
-> Timap 没花 99 美元做苹果开发者签名，所以 macOS Gatekeeper 默认会拦下未签名的 app —— 这是系统行为，不是 Timap 的 bug。许多 macOS 老牌工具（Rectangle、IINA、AltTab 等）的早期版本都需要走同样的流程。**只需绕一次，之后双击就能正常打开。**
+第一次双击 Timap 时，macOS 会拦一下，弹出类似这样的提示（具体文案因系统版本略有不同）：
 
-下面三种方法**任选一种**就行，按你的 macOS 版本和喜好挑：
+> "无法打开 Timap，因为它来自身份不明的开发者"
+>
+> "Apple 无法检查 Timap 是否包含恶意软件"
+
+这是 macOS 对所有不是从 App Store 装的软件都会做的安全检查，**不是 Timap 出了问题**。**只需要处理一次**，之后双击就直接打开了。
+
+下面三种方法**任选一种**：
 
 <details>
-<summary><b>方法 A：右键打开（推荐 · 最简单）</b></summary>
+<summary><b>方法 A：右键打开 — 最简单，推荐先试这个</b></summary>
 
-适用于：macOS 13 (Ventura) 及更早版本，部分情况下 macOS 14 (Sonoma) 也能用。
+适用于大多数 macOS 13 / 14 系统。
 
-1. 在 Finder 里打开 `/Applications` 文件夹，找到 `Timap.app`
-2. **按住 `Control` 键并点击**（或右键点击）`Timap.app`
-3. 在弹出菜单里选择 **"打开"**（不是双击！）
-4. 弹出的警告对话框上有一个 **"打开"** 按钮 —— 点它
-5. 之后就能正常双击启动了
+1. 打开 Finder → `/Applications` 文件夹，找到 `Timap.app`
+2. **按住 `Control` 键并点击**（或在触控板上用两指点击）`Timap.app`
+3. 在弹出的菜单里选 **"打开"**
+4. 这次的警告对话框会多一个 **"打开"** 按钮 —— 点它
+5. 之后双击就能正常启动了
 
-> 注意：必须是右键菜单里的"打开"才有"打开"按钮；直接双击 app 弹出的对话框只有"取消"和"移到废纸篓"。
+> 注意：必须是从右键菜单进入"打开"，才会出现可以点的"打开"按钮。直接双击弹出的对话框只有"取消"和"移到废纸篓"。
 
 </details>
 
 <details>
-<summary><b>方法 B：系统设置里"仍要打开"（macOS 14 / 15 推荐）</b></summary>
+<summary><b>方法 B：系统设置里点"仍要打开" — 方法 A 不行就用这个</b></summary>
 
-适用于：macOS 14 (Sonoma) 及以上 —— 苹果在新系统里加强了 Gatekeeper，方法 A 有时不显示"打开"按钮，这时用方法 B。
+适用于 macOS 14 (Sonoma) 和 15 (Sequoia)。这些版本里方法 A 有时找不到"打开"按钮，需要从系统设置里放行。
 
-1. 双击 `Timap.app` 让它被系统拦一次（弹出"无法验证开发者"对话框 → 点"完成"或"取消"）
-2. 打开 **系统设置（System Settings）** → **隐私与安全性（Privacy & Security）**
-3. 滚到页面**底部**的"安全性"区域，会看到一行：
+1. 双击 `Timap.app`，让弹出的拦截对话框出现，先点"完成"或"取消"关掉它
+2. 打开 **系统设置（System Settings）** → 左侧选 **隐私与安全性（Privacy & Security）**
+3. 在右侧页面**滚动到底部**，找到"安全性"区域，会看到一行写着：
    > "Timap"已被阻止使用，因为它来自身份不明的开发者。
-4. 点击右侧的 **"仍要打开"（Open Anyway）** 按钮
-5. 系统会再弹一次确认对话框 —— 点 **"打开"**（可能要求输入你的 Mac 密码或 Touch ID 验证）
-6. 之后就能正常双击启动了
+4. 点击右侧的 **"仍要打开"** 按钮
+5. 系统再弹一次确认对话框，点 **"打开"**（可能需要输入 Mac 密码或 Touch ID 验证）
+6. 之后双击就能正常启动了
 
 </details>
 
 <details>
-<summary><b>方法 C：终端命令（一键解除 · 适合开发者）</b></summary>
+<summary><b>方法 C：终端一行命令 — 适合熟悉命令行的人</b></summary>
 
-适用于：所有 macOS 版本。一行命令把 app 上的隔离标记直接去掉，之后系统就当它是"本地 app"，不再拦。
+适用于所有 macOS 版本。
 
-打开 **终端（Terminal.app）**，粘贴并执行：
+打开 **终端（Terminal.app）**，粘贴并回车：
 
 ```sh
 xattr -d com.apple.quarantine /Applications/Timap.app
 ```
 
-如果提示 `No such xattr` —— 说明已经没有隔离标记了，直接双击 Timap 就好。
+执行后再双击 Timap 就能直接打开。
 
-> 这条命令做的事：删除 macOS 给"从互联网下载"的文件加的 `com.apple.quarantine` 扩展属性。删掉之后 Gatekeeper 不再认为它是不可信来源。**只对你已经下载到本地的这一份 app 生效**，安全性不会受影响。
+如果提示 `No such xattr` 或 `No such file or directory` —— 说明 Timap 已经不需要处理了，直接双击就好。
+
+> **这条命令在做什么？** macOS 会给所有从浏览器下载的文件加一个"来自互联网"的隐藏标记，导致系统多一道安全检查。这条命令把 Timap 身上的这个标记去掉，让系统当它是普通的本地软件。**只对这一份 Timap.app 生效，不会影响你 Mac 整体的安全设置。**
 
 </details>
 
-> **三种方法都失败了？** 多半是 DMG 下载过程被截断或 macOS 版本特别新引入了新限制。可以在 [Issues](https://github.com/JVever/Timap/issues) 留言告诉我你的 macOS 版本和具体报错，我会跟进。
+> **三种都试过还是打不开？** 可能是 DMG 下载中断了文件损坏，或者你用的 macOS 版本引入了新限制。麻烦在 [Issues](https://github.com/JVever/Timap/issues) 里留个言，告诉我你的 macOS 版本号和看到的具体报错文字，我会跟进修。
 
 ### 方式二：从源码构建
 

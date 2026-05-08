@@ -29,62 +29,71 @@ For people who do three timezone math problems before opening Slack each morning
 
 1. Download `Timap-0.1.0.dmg` from [Releases](https://github.com/JVever/Timap/releases)
 2. Open the DMG → drag `Timap.app` to Applications
-3. First launch: see "Bypassing Gatekeeper" below. Once it opens, the Timap icon appears at the top of your menu bar.
+3. Double-click Timap (**a "can't be opened" dialog will pop up the first time** — see how to handle it below)
+4. Once it opens, the Timap icon appears at the top of your menu bar
 
-#### Bypassing Gatekeeper (read this on first launch)
+#### A "can't be opened" dialog appears the first time — here's how to handle it
 
-> Timap isn't signed with a $99 Apple Developer ID, so Gatekeeper blocks unsigned apps by default — this is macOS behavior, not a Timap bug. Plenty of well-known macOS utilities (Rectangle, IINA, AltTab, etc.) all required this same dance in their early days. **You only have to do it once; double-clicking works normally afterwards.**
+The first time you double-click Timap, macOS will block it and show a dialog like (wording varies a bit by macOS version):
 
-Pick **any one** of the three methods below, depending on your macOS version and preference:
+> "Timap can't be opened because it is from an unidentified developer"
+>
+> "Apple could not verify Timap is free of malware"
+
+This is macOS's built-in safety check for any app not installed from the App Store — **it's not a problem with Timap**. **You only need to handle this once**; double-clicking after that just works.
+
+Pick **any one** of the three methods below:
 
 <details>
-<summary><b>Method A: Right-click Open (simplest, recommended first)</b></summary>
+<summary><b>Method A: Right-click Open — simplest, try this first</b></summary>
 
-Works on: macOS 13 (Ventura) and earlier; sometimes still works on macOS 14 (Sonoma).
+Works on most macOS 13 / 14 systems.
 
 1. Open Finder → `/Applications` and locate `Timap.app`
-2. **Hold `Control` and click** (or right-click) `Timap.app`
-3. Choose **"Open"** from the context menu — *not* a normal double-click
-4. The warning dialog now shows an **"Open"** button — click it
-5. Future double-clicks work normally
+2. **Hold `Control` and click** (or two-finger click on a trackpad) `Timap.app`
+3. Choose **"Open"** from the context menu
+4. This time the warning dialog has an **"Open"** button — click it
+5. Future double-clicks just work
 
-> Note: only the right-click "Open" path shows the "Open" button. A regular double-click shows a dialog with just "Cancel" and "Move to Trash".
+> Note: only the right-click "Open" path produces a clickable "Open" button. A normal double-click shows a dialog with only "Cancel" and "Move to Trash".
 
 </details>
 
 <details>
-<summary><b>Method B: System Settings → Open Anyway (recommended for macOS 14 / 15)</b></summary>
+<summary><b>Method B: Click "Open Anyway" in System Settings — use this if Method A doesn't work</b></summary>
 
-Works on: macOS 14 (Sonoma) and later. Apple tightened Gatekeeper in newer versions, and Method A's "Open" button often doesn't show up — Method B is the official replacement.
+For macOS 14 (Sonoma) and 15 (Sequoia). On these versions Method A often hides the "Open" button — you'll need to allow Timap from System Settings instead.
 
-1. Double-click `Timap.app` and let it get blocked (you'll see "cannot be opened because it is from an unidentified developer" — click "Done" or "Cancel")
-2. Open **System Settings** → **Privacy & Security**
-3. Scroll to the **"Security"** section near the bottom; you'll see:
+1. Double-click `Timap.app` to trigger the block dialog, then click "Done" or "Cancel" to dismiss it
+2. Open **System Settings** → on the left, choose **Privacy & Security**
+3. **Scroll to the bottom** of the right-hand pane to the "Security" section; you'll see:
    > "Timap" was blocked from use because it is not from an identified developer.
 4. Click the **"Open Anyway"** button on the right
-5. Confirm one more time when prompted (you may need to enter your Mac password or use Touch ID)
-6. Future double-clicks work normally
+5. Confirm once more when prompted (Mac password or Touch ID may be required)
+6. Future double-clicks just work
 
 </details>
 
 <details>
-<summary><b>Method C: Terminal command (one-liner, for developers)</b></summary>
+<summary><b>Method C: One-line Terminal command — for command-line folks</b></summary>
 
-Works on: all macOS versions. Strips the quarantine attribute so the system treats Timap as a "local" app and never blocks it.
+Works on all macOS versions.
 
-Open **Terminal.app** and run:
+Open **Terminal.app**, paste and press Enter:
 
 ```sh
 xattr -d com.apple.quarantine /Applications/Timap.app
 ```
 
-If you see `No such xattr` — the attribute is already gone; just double-click Timap.
+After that, double-clicking Timap opens it directly.
 
-> What this command does: removes the `com.apple.quarantine` extended attribute that macOS adds to anything downloaded from the internet. Without that attribute, Gatekeeper no longer flags the app. **The change only affects this local copy** — it doesn't weaken your Mac's security posture.
+If you see `No such xattr` or `No such file or directory` — Timap already doesn't need this; just double-click it.
+
+> **What this command does:** macOS adds a hidden "downloaded from the internet" tag to any file that came from a browser, which triggers an extra safety check. The command removes that tag from Timap so the system treats it like any other locally-installed app. **It only affects this single copy of Timap.app — your Mac's overall security settings are unchanged.**
 
 </details>
 
-> **All three methods failed?** The download may have been corrupted, or your macOS version introduced a new restriction. Please open an [Issue](https://github.com/JVever/Timap/issues) with your macOS version and the exact error message — I'll follow up.
+> **None of the three methods worked?** Likely a corrupted DMG download or a new restriction in your macOS version. Please open an [Issue](https://github.com/JVever/Timap/issues) with your macOS version and the exact error text — I'll follow up.
 
 ### Option 2: Build from source
 
