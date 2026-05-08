@@ -11,10 +11,6 @@
   <img src="docs/screenshots/01-hero.png" width="520" alt="Timap 主界面：北京为家城市，柏林和纽约的同事各自不同状态，时间滑块上 4 小时的全员重叠窗口绿色高亮" />
 </p>
 
-写给每天打开 Slack 前要先做三道时区算术题的人。SwiftUI · Swift Package Manager · macOS 13+。
-
----
-
 ## 能干什么
 
 - **🌍 全队定位实时上图** — 一张会动的世界地图，pin 跟着昼夜走。打开 app 的那一秒，谁在深夜、谁在午休、谁刚坐到工位，一眼分得清。

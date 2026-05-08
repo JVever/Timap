@@ -11,10 +11,6 @@ English · [中文](README.md)
   <img src="docs/screenshots/01-hero.png" width="520" alt="Timap main view: Beijing as the home city, teammates in Berlin and New York in different states, a 4-hour all-team overlap window highlighted on the time slider" />
 </p>
 
-For people who do three timezone math problems before opening Slack each morning. SwiftUI · Swift Package Manager · macOS 13+.
-
----
-
 ## What it does
 
 - **🌍 Whole team on one live map** — A world map with day/night that follows the sun. The moment you open the app, you can tell who's deep in the night, who's at lunch, who just sat down at their desk.
