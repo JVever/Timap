@@ -21,46 +21,55 @@ English · [中文](README.md)
 
 ### Option 1: Download the DMG (recommended)
 
-1. Open the [Releases page](https://github.com/JVever/Timap/releases) → under the latest version's **Assets** section, click `Timap-0.1.1.dmg` to download
+1. Open the [Releases page](https://github.com/JVever/Timap/releases) → under the latest version's **Assets** section, click `Timap-0.1.2.dmg` to download
 2. Open the downloaded DMG → drag `Timap.app` to your Applications folder
 3. Double-click Timap (**a "can't be opened" dialog will pop up the first time** — see how to handle it below)
 4. After unblocking, double-click again and **the welcome screen pops up automatically**; just follow the prompts. After that, Timap lives in the **top-right menu bar** (icon: a black-framed three-bar mark) — click it any time to use the app
 
-#### A "can't be opened" dialog appears the first time — here's how to handle it
+#### macOS will block the first launch — here's how to get through it
 
-The first time you double-click Timap, macOS will block it and show a dialog like (wording varies a bit by macOS version):
+The first time you double-click Timap, macOS will refuse to open it and show one of these dialogs (wording differs across macOS versions):
 
+> **"Timap" is damaged and can't be opened. You should move it to the Trash.**
+>
 > "Timap can't be opened because it is from an unidentified developer"
 >
 > "Apple could not verify Timap is free of malware"
 
-This is macOS's built-in safety check for any app not installed from the App Store — **it's not a problem with Timap**. **You only need to handle this once**; double-clicking after that just works.
+> ⚠️ **Don't be alarmed by "is damaged".** The file isn't actually damaged. This is macOS 15 (Sequoia) and 26 (Tahoe)'s harshest dialog for apps that aren't notarized by Apple — the literal wording says "damaged", but the file is fine; the system just refuses to run it. **Nothing's wrong with Timap.**
 
-Pick either method below:
+**You only need to handle this once**; future double-clicks just work.
 
-##### Method 1: Click "Open Anyway" in System Settings (recommended)
+##### Method 1: One-line Terminal command (recommended · works on any macOS)
 
-1. Double-click `Timap.app` to trigger the block dialog, then click "Done" or "Cancel" to dismiss it
-2. Open **System Settings** → on the left, choose **Privacy & Security**
-3. **Scroll to the bottom** of the right-hand pane to the "Security" section; you'll see:
-   > "Timap" was blocked from use because it is not from an identified developer.
-4. Click the **"Open Anyway"** button on the right
-5. Confirm once more when prompted (Mac password or Touch ID may be required)
-6. Future double-clicks just work
+Open **Terminal.app** — search "terminal" in Spotlight and press Enter.
 
-##### Method 2: One-line Terminal command (for command-line folks)
-
-Open **Terminal.app**, paste and press Enter:
+Paste this line into the Terminal window and press Enter:
 
 ```sh
 xattr -d com.apple.quarantine /Applications/Timap.app
 ```
 
-After that, double-clicking Timap opens it directly.
+If you see `Operation not permitted`, use the `sudo` variant instead (it'll prompt for your Mac password — typing is invisible, that's normal):
 
-If you see `No such xattr` or `No such file or directory` — Timap already doesn't need this; just double-click it.
+```sh
+sudo xattr -cr /Applications/Timap.app
+```
 
-> **What this command does:** macOS adds a hidden "downloaded from the internet" tag to any file that came from a browser, which triggers an extra safety check. The command removes that tag from Timap so the system treats it like any other locally-installed app. **It only affects this single copy of Timap.app — your Mac's overall security settings are unchanged.**
+Then double-click Timap — **it should just open**.
+
+> **What this command does:** macOS silently tags every file your browser downloads with a "from-the-internet" attribute that triggers extra safety checks. This command strips that tag from Timap so the system treats it as a regular local app. **It only affects this one copy of Timap.app — your Mac's overall security settings are unchanged.**
+
+##### Method 2: Click "Open Anyway" in System Settings (often missing on macOS 15+)
+
+> ⚠️ **On macOS 15 and 26 — especially when you saw the "is damaged" dialog — the "Open Anyway" button often doesn't appear at all.** Apple removed this escape hatch for the harshest blocks. If your dialog was the milder "unidentified developer" version this path may still work; if you saw "is damaged", go back and use Method 1.
+
+1. Double-click `Timap.app` to trigger the block dialog, then click "Done" or "Cancel" to dismiss it
+2. Open **System Settings** → on the left, choose **Privacy & Security**
+3. **Scroll to the bottom** of the right-hand pane to the "Security" section and look for:
+   > "Timap" was blocked from use because it is not from an identified developer.
+4. If you see it, click **"Open Anyway"** on the right → confirm in the next dialog (Mac password or Touch ID may be required)
+5. If that line **isn't there at all** → your system doesn't offer this path; go use Method 1
 
 > **Neither method worked?** Likely a corrupted DMG download or a new restriction in your macOS version. Please open an [Issue](https://github.com/JVever/Timap/issues) with your macOS version and the exact error text — I'll follow up.
 

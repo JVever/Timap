@@ -19,10 +19,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var screenshotObserver: Any?
     private var tickTimer: Timer?
     /// Global mouse-down monitor: closes the popover when the user clicks
-    /// anywhere outside this app. `.transient` behavior alone is unreliable
-    /// in `.accessory` (LSUIElement) apps because the popover never becomes
-    /// the key window, so the system never detects "focus lost".
+    /// anywhere outside this app. We can't rely on the system's transient
+    /// behavior because:
+    ///   1. `.transient` only auto-closes if the popover's window is key,
+    ///      and `.accessory` (LSUIElement) apps never make their popover
+    ///      key, so the system never sees "focus lost".
+    ///   2. macOS 15+ (Sequoia / Tahoe) tightened `.transient` further:
+    ///      it started closing on *any* mouse-down, including clicks on
+    ///      the popover's own buttons — clicking "Next" in the onboarding
+    ///      flow dismissed the whole popover before the button's action
+    ///      could fire. We use `.applicationDefined` and run our own
+    ///      dismiss logic via these monitors.
     private var outsideClickMonitor: Any?
+    /// Local key-down monitor for Esc inside the popover, since
+    /// `.applicationDefined` popovers don't auto-close on Esc.
+    private var escKeyMonitor: Any?
 
     nonisolated func applicationDidFinishLaunching(_ notification: Notification) {
         Task { @MainActor in self.setUp() }
@@ -58,7 +69,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // `preferredContentSize`, so the popover grows/shrinks as the team
         // list changes, capped by TeamRowsView's screen-aware max height.
         popover = NSPopover()
-        popover.behavior = .transient
+        // .applicationDefined means: don't auto-dismiss on user interaction.
+        // We manage opening/closing ourselves via the status-item click
+        // (togglePopover), the global outside-click monitor, and the local
+        // Esc-key monitor. See the property comments above for why
+        // .transient breaks for LSUIElement + macOS 15+.
+        popover.behavior = .applicationDefined
         let host = NSHostingController(
             rootView: ContentView().environmentObject(state)
         )
@@ -103,7 +119,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func openPopoverIfNeeded() {
         guard !popover.isShown, let button = statusItem?.button else { return }
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-        startOutsideClickMonitor()
+        startDismissMonitors()
     }
 
     @objc private func togglePopover(_ sender: Any?) {
@@ -111,28 +127,42 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             closePopover()
         } else if let button = statusItem.button {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            startOutsideClickMonitor()
+            startDismissMonitors()
         }
     }
 
     private func closePopover() {
-        stopOutsideClickMonitor()
+        stopDismissMonitors()
         popover.performClose(nil)
     }
 
-    private func startOutsideClickMonitor() {
-        guard outsideClickMonitor == nil else { return }
-        outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(
-            matching: [.leftMouseDown, .rightMouseDown]
-        ) { [weak self] _ in
-            Task { @MainActor in self?.closePopover() }
+    private func startDismissMonitors() {
+        if outsideClickMonitor == nil {
+            outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(
+                matching: [.leftMouseDown, .rightMouseDown]
+            ) { [weak self] _ in
+                Task { @MainActor in self?.closePopover() }
+            }
+        }
+        if escKeyMonitor == nil {
+            escKeyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+                if event.keyCode == 53 { // Esc
+                    Task { @MainActor in self?.closePopover() }
+                    return nil
+                }
+                return event
+            }
         }
     }
 
-    private func stopOutsideClickMonitor() {
+    private func stopDismissMonitors() {
         if let monitor = outsideClickMonitor {
             NSEvent.removeMonitor(monitor)
             outsideClickMonitor = nil
+        }
+        if let monitor = escKeyMonitor {
+            NSEvent.removeMonitor(monitor)
+            escKeyMonitor = nil
         }
     }
 

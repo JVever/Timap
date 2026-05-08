@@ -4,6 +4,30 @@ All notable changes to Timap are tracked here. Format: [Keep a Changelog](https:
 
 ## [Unreleased]
 
+## [0.1.2] — 2026-05-08
+
+### Fixed
+
+- **Onboarding popover dismissed on the first button click.** On
+  macOS 15 (Sequoia) and 26 (Tahoe), `NSPopover.behavior =
+  .transient` started treating clicks on the popover's *own*
+  buttons as "user interacted, dismiss me" — clicking "下一步" /
+  "Next" on the welcome screen closed the whole popover before
+  the button's action could run. Switched the popover behavior
+  to `.applicationDefined` and now manage dismissal entirely
+  through the existing global outside-click monitor plus a new
+  local Esc-key monitor. Buttons inside the popover work
+  correctly again.
+
+### Changed
+
+- README install troubleshooting reordered: the Terminal `xattr`
+  command is now Method 1 (it always works), and System Settings
+  → Open Anyway is Method 2 with an explicit warning that the
+  "Open Anyway" button often doesn't appear on macOS 15 / 26 for
+  ad-hoc-signed apps. The "Timap is damaged" dialog wording is
+  now also explicitly called out and reassured.
+
 ## [0.1.1] — 2026-05-08
 
 ### Fixed
@@ -54,6 +78,7 @@ Initial public release.
 - Headless screenshot tool (`TimapShot` + `make screenshot`) for capturing the popover via distributed notifications.
 - Brand identity: SVG logo source, programmatically-drawn menu-bar template icon, regenerable `.icns` via `make icon`.
 
-[Unreleased]: https://github.com/JVever/Timap/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/JVever/Timap/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/JVever/Timap/releases/tag/v0.1.2
 [0.1.1]: https://github.com/JVever/Timap/releases/tag/v0.1.1
 [0.1.0]: https://github.com/JVever/Timap/releases/tag/v0.1.0
