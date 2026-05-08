@@ -4,6 +4,26 @@ All notable changes to Timap are tracked here. Format: [Keep a Changelog](https:
 
 ## [Unreleased]
 
+## [0.1.3] — 2026-05-09
+
+### Fixed
+
+- **Onboarding popover dismissed on inside clicks (the v0.1.2
+  fix didn't actually fix it).** Switching to
+  `popover.behavior = .applicationDefined` in v0.1.2 should have
+  stopped AppKit from auto-closing the popover, but in real
+  macOS 15+ environments the popover still dismissed on the
+  first button tap — verified in the wild after the v0.1.2
+  release. Root cause: my own outside-click monitor was firing
+  for mouse-down events that landed inside the popover. On
+  macOS 15+ the global event monitor receives in-popover
+  clicks under LSUIElement + non-key-window conditions
+  (technically allowed but contrary to how the API behaves on
+  macOS 13/14). Added a geometry check: ignore mouse-down
+  events whose location falls inside the popover's window
+  frame. Onboarding "Next" / "Get started" buttons now work
+  on macOS 15 and 26.
+
 ## [0.1.2] — 2026-05-08
 
 ### Fixed
@@ -78,7 +98,8 @@ Initial public release.
 - Headless screenshot tool (`TimapShot` + `make screenshot`) for capturing the popover via distributed notifications.
 - Brand identity: SVG logo source, programmatically-drawn menu-bar template icon, regenerable `.icns` via `make icon`.
 
-[Unreleased]: https://github.com/JVever/Timap/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/JVever/Timap/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/JVever/Timap/releases/tag/v0.1.3
 [0.1.2]: https://github.com/JVever/Timap/releases/tag/v0.1.2
 [0.1.1]: https://github.com/JVever/Timap/releases/tag/v0.1.1
 [0.1.0]: https://github.com/JVever/Timap/releases/tag/v0.1.0

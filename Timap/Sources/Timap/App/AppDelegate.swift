@@ -141,7 +141,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(
                 matching: [.leftMouseDown, .rightMouseDown]
             ) { [weak self] _ in
-                Task { @MainActor in self?.closePopover() }
+                Task { @MainActor in
+                    guard let self else { return }
+                    // Defensive geometry check: macOS 15+ (Sequoia /
+                    // Tahoe) was observed to route mouse-down events
+                    // intended for the popover's own buttons through
+                    // this global monitor too — an artifact of the
+                    // LSUIElement + non-key-window combination. Without
+                    // this check, clicking "Next" inside the welcome
+                    // popover triggers self.closePopover before the
+                    // SwiftUI button action runs, and onboarding gets
+                    // stuck on the first step.
+                    if let popoverWindow = self.popover.contentViewController?.view.window,
+                       popoverWindow.frame.contains(NSEvent.mouseLocation) {
+                        return
+                    }
+                    self.closePopover()
+                }
             }
         }
         if escKeyMonitor == nil {

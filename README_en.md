@@ -21,7 +21,7 @@ English · [中文](README.md)
 
 ### Option 1: Download the DMG (recommended)
 
-1. Open the [Releases page](https://github.com/JVever/Timap/releases) → under the latest version's **Assets** section, click `Timap-0.1.2.dmg` to download
+1. Open the [Releases page](https://github.com/JVever/Timap/releases) → under the latest version's **Assets** section, click `Timap-0.1.3.dmg` to download
 2. Open the downloaded DMG → drag `Timap.app` to your Applications folder
 3. Double-click Timap (**a "can't be opened" dialog will pop up the first time** — see how to handle it below)
 4. After unblocking, double-click again and **the welcome screen pops up automatically**; just follow the prompts. After that, Timap lives in the **top-right menu bar** (icon: a black-framed three-bar mark) — click it any time to use the app
