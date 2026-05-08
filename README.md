@@ -87,7 +87,7 @@ make run
 
 ### 1. 选你所在的城市
 
-第一次打开是欢迎页：logo 装配动画 + 三句价值主张（看清每个城市当下是清晨午后还是深夜 / 一眼找到全员都在工作时间的会议时段 / 常驻菜单栏随时拉出收起）。下一步选你所在的城市，作为本地时区。
+按欢迎页的提示走，选一个城市作为你的本地时区。
 
 <p align="center">
   <img src="docs/screenshots/06-onboarding-welcome.png" width="240" alt="欢迎页 · logo 装配完成" />

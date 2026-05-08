@@ -87,7 +87,7 @@ On notched MacBooks (Pro 14"/16" or Air 13"/15"), if your menu bar is crowded, T
 
 ### 1. Pick your city
 
-First launch shows the welcome screen: a logo assembly animation plus three value-prop bullets (see morning/afternoon/night across every city · spot windows where everyone's in working hours · lives in the menu bar). Next, pick your city as your home time zone.
+Follow the welcome screen's prompts to pick your city as your home time zone.
 
 <p align="center">
   <img src="docs/screenshots/06-onboarding-welcome.png" width="240" alt="Welcome screen with assembled logo" />
