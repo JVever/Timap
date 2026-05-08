@@ -64,15 +64,6 @@ If you see `No such xattr` or `No such file or directory` — Timap already does
 
 > **Neither method worked?** Likely a corrupted DMG download or a new restriction in your macOS version. Please open an [Issue](https://github.com/JVever/Timap/issues) with your macOS version and the exact error text — I'll follow up.
 
-#### Menu-bar icon hidden behind the notch?
-
-On notched MacBooks (Pro 14"/16" or Air 13"/15"), if your menu bar is crowded, Timap's icon may be hidden behind the notch and unclickable. Two ways out:
-
-- **Open Timap without the menu-bar icon** — just **double-click `/Applications/Timap.app`** (or launch from Spotlight / Launchpad). The main view pops up directly.
-- **Fix it permanently with a menu-bar manager.** Free, open-source picks:
-  - [Hidden Bar](https://github.com/dwarvesf/hidden) — minimal, just shows/hides
-  - [Ice](https://github.com/jordanbaird/Ice) — fuller-featured
-
 ### Option 2: Build from source
 
 ```sh
@@ -82,6 +73,15 @@ make run
 ```
 
 Requires macOS 13+ and Xcode Command Line Tools (`xcode-select --install`).
+
+### Can't find the Timap icon in your menu bar?
+
+On notched MacBooks (Pro 14"/16" or Air 13"/15"), if your menu bar is crowded, Timap's icon may be hidden behind the notch and unclickable. Two ways out:
+
+- **Open Timap without the menu-bar icon** — just **double-click `/Applications/Timap.app`** (or launch from Spotlight / Launchpad). The main view pops up directly.
+- **Fix it permanently with a menu-bar manager.** Free, open-source picks:
+  - [Hidden Bar](https://github.com/dwarvesf/hidden) — minimal, just shows/hides
+  - [Ice](https://github.com/jordanbaird/Ice) — fuller-featured
 
 ## Three-step quickstart
 

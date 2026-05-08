@@ -64,15 +64,6 @@ xattr -d com.apple.quarantine /Applications/Timap.app
 
 > **两种都试过还是打不开？** 可能是 DMG 下载中断导致文件损坏，或者你用的 macOS 版本引入了新限制。麻烦在 [Issues](https://github.com/JVever/Timap/issues) 里留个言，告诉我你的 macOS 版本号和看到的具体报错文字，我会跟进修。
 
-#### 菜单栏图标被刘海挡住了？
-
-带刘海的 MacBook（Pro 14"/16" 或 Air 13"/15"）如果菜单栏图标多，Timap 图标可能躲在刘海背后看不见、点不着。两条路都能解：
-
-- **不靠菜单栏图标也能打开** — 直接**双击 `/Applications/Timap.app`**，或者从 Spotlight / Launchpad 启动 Timap，主界面会自动弹出。
-- **彻底解决：装个菜单栏管理工具**（一次配置、长期受益），推荐免费开源的两个：
-  - [Hidden Bar](https://github.com/dwarvesf/hidden) — 简单，专做隐藏 / 显示
-  - [Ice](https://github.com/jordanbaird/Ice) — 功能更全
-
 ### 方式二：从源码构建
 
 ```sh
@@ -82,6 +73,15 @@ make run
 ```
 
 需要 macOS 13+ 和 Xcode Command Line Tools（`xcode-select --install`）。
+
+### 装好之后菜单栏看不到 Timap 图标？
+
+带刘海的 MacBook（Pro 14"/16" 或 Air 13"/15"）如果菜单栏图标多，Timap 图标可能躲在刘海背后看不见、点不着。两条路都能解：
+
+- **不靠菜单栏图标也能打开** — 直接**双击 `/Applications/Timap.app`**，或者从 Spotlight / Launchpad 启动 Timap，主界面会自动弹出。
+- **彻底解决：装个菜单栏管理工具**（一次配置、长期受益），推荐免费开源的两个：
+  - [Hidden Bar](https://github.com/dwarvesf/hidden) — 简单，专做隐藏 / 显示
+  - [Ice](https://github.com/jordanbaird/Ice) — 功能更全
 
 ## 三步上手
 
