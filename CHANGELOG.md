@@ -22,6 +22,10 @@ All notable changes to Timap are tracked here. Format: [Keep a Changelog](https:
 - **返回按钮提到顶栏**。和右上角的语言切换按钮平行（不再
   挤在标题左侧），cityPick 的标题 + 说明独立成段，整体内容
   下移让视觉重心向 welcome 页靠拢。
+- **主面板左上角大时间统一成 24 小时制**（之前是 12 小时
+  AM/PM，城市卡片和地图标签是 24h，三处不一致）。跨时区
+  会议工具更看重无歧义——"23:00"和"11:00 PM"前者一眼无
+  误读，后者容易和 11 AM / 凌晨 12 点等混淆。
 
 ### Fixed
 

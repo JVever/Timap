@@ -61,7 +61,7 @@ struct HeaderView: View {
         // Plain Text + tap gesture (no Button) — single click cycles to
         // the next recommended meeting window. Earlier we used double-tap
         // but the affordance was undiscoverable.
-        Text(TimapFormat.hour(displayHour, lang: state.language))
+        Text(TimapFormat.hour(displayHour, ampm: false, lang: state.language))
             .font(.system(size: 30, weight: .medium).monospacedDigit())
             .tracking(-0.8)
             .foregroundColor(timeColor)
