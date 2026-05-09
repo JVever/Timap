@@ -1,5 +1,5 @@
 APP_NAME := Timap
-VERSION  := 0.1.5
+VERSION  := 0.1.6
 APP_DIR  := dist/$(APP_NAME).app
 DMG_PATH := dist/$(APP_NAME)-$(VERSION).dmg
 DMG_STAGE:= dist/dmg-staging

@@ -4,6 +4,34 @@ All notable changes to Timap are tracked here. Format: [Keep a Changelog](https:
 
 ## [Unreleased]
 
+## [0.1.6] — 2026-05-09
+
+### Changed
+
+- **Onboarding 城市选择页改版**。常用城市从 5 个扩到 12 个
+  （北京、上海、香港、东京、首尔、新加坡 / 悉尼、伦敦、柏林、
+  纽约、旧金山、多伦多），按地理顺序两行铺开，覆盖中国用户
+  跨海外协作时最常碰到的时区。query 为空时不再展示底部
+  "全量"列表（之前展示的是 cities.json 的前 8 项，恰好全是
+  中国城市，和上方"常用城市"chip 语义重叠让人困惑），改为
+  仅展示 12 个 chip；输入搜索词时再切换到结果列表。
+- **列表项副标题去重**。原来中文界面下显示 "CN · Beijing"，
+  和左边的 CN 徽章 + 标题里的"北京"三处都在重复同一个国家
+  信息加一个拼音；改为 GMT 偏移（如 "GMT+9"、"GMT−5"），是
+  用户挑选时区时真正有用的区分维度。
+- **返回按钮提到顶栏**。和右上角的语言切换按钮平行（不再
+  挤在标题左侧），cityPick 的标题 + 说明独立成段，整体内容
+  下移让视觉重心向 welcome 页靠拢。
+
+### Fixed
+
+- **选中某个常用城市后，标题 / 搜索框 / chips 集体上跳**。
+  picked 状态出现 SelectedPreview 让 footer 高度从 ~67px 增到
+  ~127px，body 区的 Spacer 重新分配，上方所有元素跟着上移
+  ~30px。改为给 SelectedPreview 预留固定 60px 占位（picked
+  为空时是透明 placeholder），footer 高度恒定，body 不再
+  reflow。
+
 ## [0.1.5] — 2026-05-09
 
 ### Fixed
@@ -144,7 +172,8 @@ Initial public release.
 - Headless screenshot tool (`TimapShot` + `make screenshot`) for capturing the popover via distributed notifications.
 - Brand identity: SVG logo source, programmatically-drawn menu-bar template icon, regenerable `.icns` via `make icon`.
 
-[Unreleased]: https://github.com/JVever/Timap/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/JVever/Timap/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/JVever/Timap/releases/tag/v0.1.6
 [0.1.5]: https://github.com/JVever/Timap/releases/tag/v0.1.5
 [0.1.4]: https://github.com/JVever/Timap/releases/tag/v0.1.4
 [0.1.3]: https://github.com/JVever/Timap/releases/tag/v0.1.3

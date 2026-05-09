@@ -12,7 +12,14 @@ private let onbInk   = Color(hex: "#0d1420")
 private let onbBgTop = Color(hex: "#1a2c44")
 private let onbBgBot = Color(hex: "#0d141f")
 
-private let onbHotCityNames = ["Beijing", "Shanghai", "Tokyo", "Singapore", "London"]
+// Two visual rows of six. Ordered geographically (East Asia → SE Asia/AU →
+// Europe → Americas) so the eye sweeps a globe. The list intentionally
+// covers the major hubs a Chinese-company-with-overseas-teammates user
+// would actually pick — adjust here if usage data ever says otherwise.
+private let onbHotCityNames = [
+    "Beijing", "Shanghai", "Hong Kong", "Tokyo", "Seoul", "Singapore",
+    "Sydney", "London", "Berlin", "New York", "San Francisco", "Toronto",
+]
 
 struct OnboardingView: View {
     @EnvironmentObject var state: AppState
@@ -40,9 +47,6 @@ struct OnboardingView: View {
                     ))
                 case .cityPick:
                     CityPickStepView(
-                        onBack: {
-                            withAnimation(.easeInOut(duration: 0.3)) { step = .welcome }
-                        },
                         onDone: { city in state.completeOnboarding(home: city) }
                     )
                     .transition(.asymmetric(
@@ -56,6 +60,33 @@ struct OnboardingView: View {
             LangSwitchView()
                 .padding(.top, 14)
                 .padding(.trailing, 14)
+
+            // Back button lives at the very top so the cityPick header
+            // (title + hint) can sit lower without being crowded by it.
+            // Conditional on step so it never shows on the welcome page.
+            if step == .cityPick {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) { step = .welcome }
+                } label: {
+                    Image(systemName: "arrow.left")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.7))
+                        .frame(width: 28, height: 28)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color.white.opacity(0.06))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+                                )
+                        )
+                }
+                .buttonStyle(.plain)
+                .help(state.tr(.onbBack))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top, 14)
+                .padding(.leading, 14)
+            }
         }
         .frame(height: 640)
         .clipped()
@@ -137,7 +168,6 @@ private struct WelcomeStepView: View {
 
 private struct CityPickStepView: View {
     @EnvironmentObject var state: AppState
-    let onBack: () -> Void
     let onDone: (City) -> Void
 
     @State private var query: String = ""
@@ -151,38 +181,27 @@ private struct CityPickStepView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Header
-            HStack(alignment: .top, spacing: 12) {
-                Button(action: onBack) {
-                    Image(systemName: "arrow.left")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.7))
-                        .frame(width: 28, height: 28)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.white.opacity(0.06))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
-                                )
-                        )
-                }
-                .buttonStyle(.plain)
-                .help(state.tr(.onbBack))
-                .padding(.top, 2)
+            // When the user is just landing on this step (no query), the
+            // header + search + chips form a single visual cluster that
+            // sits at the same vertical center as the welcome page's
+            // logo + headline + bullets — so the eye doesn't jump as the
+            // user crosses from page 1 to page 2. As soon as the user
+            // starts typing we collapse the top spacer so the results
+            // list can grow and fill the popover.
+            if query.isEmpty { Spacer(minLength: 0) }
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(state.tr(.whereBased))
-                        .font(.system(size: 19, weight: .bold))
-                        .tracking(-0.19)
-                        .foregroundColor(.white)
-                    Text(state.tr(.locationHint))
-                        .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.55))
-                }
-                Spacer(minLength: 0)
+            // Header — title + hint
+            VStack(alignment: .leading, spacing: 4) {
+                Text(state.tr(.whereBased))
+                    .font(.system(size: 19, weight: .bold))
+                    .tracking(-0.19)
+                    .foregroundColor(.white)
+                Text(state.tr(.locationHint))
+                    .font(.system(size: 12))
+                    .foregroundColor(.white.opacity(0.55))
             }
-            .padding(.top, 24)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, query.isEmpty ? 0 : 56)
             .padding(.horizontal, 28)
             .padding(.bottom, 12)
 
@@ -193,27 +212,35 @@ private struct CityPickStepView: View {
                 if query.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         sectionLabel(state.tr(.onbHotLabel))
-                        chipRow
+                        chipGrid
                     }
-                }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    if !query.isEmpty {
+                } else {
+                    VStack(alignment: .leading, spacing: 8) {
                         sectionLabel(state.tr(.onbResultsLabel))
+                        resultsList
                     }
-                    resultsList
+                    .frame(maxHeight: .infinity)
                 }
-                .frame(maxHeight: .infinity)
             }
             .padding(.top, 8)
             .padding(.horizontal, 28)
 
+            if query.isEmpty { Spacer(minLength: 0) }
+
             // Footer
             VStack(alignment: .leading, spacing: 12) {
-                if let p = picked {
-                    SelectedPreview(city: p)
-                        .transition(.opacity.combined(with: .move(edge: .bottom)))
+                // Reserve a fixed slot for SelectedPreview so the footer's
+                // overall height stays constant when picked toggles —
+                // otherwise the body's spacer redistributes and the
+                // header / search field / chips visibly jump on selection.
+                ZStack {
+                    if let p = picked {
+                        SelectedPreview(city: p)
+                            .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(height: 60)
                 HStack {
                     StepDots(activeIndex: 1, total: 2)
                     Spacer()
@@ -278,32 +305,47 @@ private struct CityPickStepView: View {
         )
     }
 
-    private var chipRow: some View {
+    // 12 popular cities laid out as two rows of six. Static split (vs.
+    // a wrap layout) keeps each row visually balanced — chip widths
+    // vary by city-name length but stay close enough that two equal
+    // rows look intentional.
+    private var chipGrid: some View {
+        let firstRow = Array(hotCities.prefix(6))
+        let secondRow = Array(hotCities.dropFirst(6))
+        return VStack(alignment: .leading, spacing: 6) {
+            chipLine(firstRow)
+            if !secondRow.isEmpty { chipLine(secondRow) }
+        }
+    }
+
+    private func chipLine(_ cities: [City]) -> some View {
         HStack(spacing: 6) {
-            ForEach(hotCities) { city in
-                let active = picked?.id == city.id
-                Button { picked = city } label: {
-                    HStack(spacing: 6) {
-                        CountryCodeBadge(code: city.country, size: .sm)
-                        Text(city.displayName(state.language))
-                            .font(.system(size: 12))
-                            .foregroundColor(active ? onbGreen : .white.opacity(0.85))
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(
-                        RoundedRectangle(cornerRadius: 14)
-                            .fill(active ? onbGreen.opacity(0.14) : Color.white.opacity(0.05))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 14)
-                                    .stroke(active ? onbGreen.opacity(0.5) : Color.white.opacity(0.12), lineWidth: 0.5)
-                            )
-                    )
-                }
-                .buttonStyle(.plain)
-            }
+            ForEach(cities) { city in chip(for: city) }
             Spacer(minLength: 0)
         }
+    }
+
+    private func chip(for city: City) -> some View {
+        let active = picked?.id == city.id
+        return Button { picked = city } label: {
+            HStack(spacing: 6) {
+                CountryCodeBadge(code: city.country, size: .sm)
+                Text(city.displayName(state.language))
+                    .font(.system(size: 12))
+                    .foregroundColor(active ? onbGreen : .white.opacity(0.85))
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(active ? onbGreen.opacity(0.14) : Color.white.opacity(0.05))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(active ? onbGreen.opacity(0.5) : Color.white.opacity(0.12), lineWidth: 0.5)
+                    )
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     private var resultsList: some View {
@@ -364,11 +406,18 @@ private struct CityPickStepView: View {
         )
     }
 
+    // Subtitle under each row. The country code is already shown by the
+    // left-side badge, and the city name is in the title — so the only
+    // useful extra info is the offset from UTC. Computed once per row
+    // (DST won't shift during a single onboarding session).
     private func metaLine(for city: City) -> String {
-        switch state.language {
-        case .zh: return "\(city.country) · \(city.name)"
-        case .en: return "\(city.country) · \(city.tz)"
-        }
+        let secs = TimeZone(identifier: city.tz)?.secondsFromGMT(for: Date()) ?? 0
+        let totalMinutes = secs / 60
+        let sign = totalMinutes >= 0 ? "+" : "−"
+        let absMin = abs(totalMinutes)
+        let h = absMin / 60
+        let m = absMin % 60
+        return m == 0 ? "GMT\(sign)\(h)" : String(format: "GMT%@%d:%02d", sign, h, m)
     }
 }
 
